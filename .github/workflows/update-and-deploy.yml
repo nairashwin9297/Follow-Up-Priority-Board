@@ -49,6 +49,8 @@ jobs:
 
       # A push only redeploys the site. The Scout fetch (one request per run) happens on
       # the schedule or a manual run. The User-Agent comes from config/app.json.
+      # After the stop_fetching_after date in config/app.json this step does nothing: no request, no file
+      # changes, exit 0 with ok=true. The commit step below then finds nothing to commit, and the run stays green.
       - name: Fetch Scout and update data
         id: pipeline
         if: github.event_name != 'push'

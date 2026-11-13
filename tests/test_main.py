@@ -4,14 +4,17 @@ Payloads come from the real fixture (or a slice of it). Nothing here uses the ne
 """
 import json
 import shutil
-from datetime import datetime, timedelta, timezone
+import subprocess
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 import pytest
 
 from pipeline import main as pipeline_main
-from pipeline.fetch import FetchError
-from pipeline.main import main, run, write_github_output
+from pipeline.fetch import ConfigError, FetchError
+from pipeline.main import (
+    is_archived, main, parse_stop_date, run, write_github_output, write_step_summary,
+)
 from pipeline.parse import to_iso
 
 ROOT = Path(__file__).parent.parent
@@ -228,8 +231,11 @@ def test_github_output_is_a_noop_outside_actions(tmp_path):
 
 # --- CLI ----------------------------------------------------------------------
 
-def make_root(tmp_path, repo_url):
-    """A throwaway repo root, so these tests keep passing once the real repo_url is set."""
+def make_root(tmp_path, repo_url, **extra):
+    """A throwaway repo root, so these tests keep passing once the real repo_url is set.
+
+    Extra keyword arguments become extra keys in its config/app.json (for example stop_fetching_after).
+    """
     (tmp_path / "config").mkdir()
     shutil.copy(ROOT / "config" / "scoring.json", tmp_path / "config" / "scoring.json")
     app = {
@@ -237,6 +243,7 @@ def make_root(tmp_path, repo_url):
         "repo_url": repo_url, "scout_url": "https://example.invalid/scout.api",
         "user_agent_template": "FollowUpPriorityBoard/0.1 (+{repo_url}; {contact})",
     }
+    app.update(extra)
     (tmp_path / "config" / "app.json").write_text(json.dumps(app))
     return tmp_path
 
@@ -282,3 +289,152 @@ def test_scout_failure_through_cli_exits_zero_but_reports_not_ok(tmp_path, monke
     assert main([], root=root) == 0
     assert out.read_text() == "ok=false\n"
     assert read(root / "site" / "data", "status.json")["ok"] is False
+
+
+# --- The end date (stop_fetching_after) -----------------------------------------------------------
+
+STOP = "2027-02-28"
+REAL_URL = "https://github.com/x/y"
+BEFORE = datetime(2027, 2, 1, 6, 17, tzinfo=timezone.utc)
+LAST_DAY = datetime(2027, 2, 28, 23, 59, 59, tzinfo=timezone.utc)  # the stop date itself is still a fetching day
+NEXT_DAY = datetime(2027, 3, 1, 0, 0, 0, tzinfo=timezone.utc)  # the first moment that is skipped
+
+
+def fake_scout(monkeypatch):
+    """Swap the real fetch for one that returns the real fixture and records every call."""
+    calls = []
+
+    def fetch(url, user_agent):
+        calls.append(url)
+        return SAMPLE
+
+    monkeypatch.setattr(pipeline_main, "fetch_scout", fetch)
+    return calls
+
+
+def data_snapshot(root):
+    out = root / "site" / "data"
+    return {p.name: p.read_bytes() for p in sorted(out.iterdir())} if out.exists() else None
+
+
+@pytest.mark.parametrize("now", [BEFORE, LAST_DAY])
+def test_up_to_and_including_the_stop_date_the_fetch_runs(tmp_path, monkeypatch, now):
+    root = make_root(tmp_path, REAL_URL, stop_fetching_after=STOP)
+    calls = fake_scout(monkeypatch)
+    assert main([], root=root, now=now) == 0
+    assert len(calls) == 1
+    data = root / "site" / "data"
+    assert read(data, "status.json")["ok"] is True
+    # The page reads the date from here, since it cannot read config/app.json.
+    assert read(data, "latest.json")["stop_fetching_after"] == STOP
+
+
+@pytest.mark.parametrize("now", [NEXT_DAY, datetime(2030, 1, 1, tzinfo=timezone.utc)])
+def test_after_the_stop_date_nothing_is_fetched_or_written(tmp_path, monkeypatch, caplog, now):
+    root = make_root(tmp_path, REAL_URL, stop_fetching_after=STOP)
+    calls = fake_scout(monkeypatch)
+    assert main([], root=root, now=BEFORE) == 0  # an ordinary run first, so there is data to protect
+    before = data_snapshot(root)
+    assert len(calls) == 1
+
+    gh_output, summary = tmp_path / "gh_output.txt", tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(gh_output))
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    with caplog.at_level("INFO"):
+        assert main([], root=root, now=now) == 0  # exits 0, so the workflow does not go red
+
+    assert len(calls) == 1  # no second request
+    assert data_snapshot(root) == before  # not one byte changed, and no new file
+    assert gh_output.read_text() == "ok=true\nskipped=true\n"  # ok=true: the workflow only fails on ok=false
+    assert STOP in summary.read_text()
+    assert "skipped" in caplog.text
+
+
+@pytest.mark.skipif(shutil.which("git") is None, reason="git is not installed")
+def test_after_the_stop_date_git_has_nothing_to_commit(tmp_path, monkeypatch):
+    # The workflow's "Commit changed data" step commits only when `git status --porcelain site/data` is non-empty.
+    root = make_root(tmp_path, REAL_URL, stop_fetching_after=STOP)
+    fake_scout(monkeypatch)
+    main([], root=root, now=BEFORE)
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=root, capture_output=True, text=True, check=True).stdout
+
+    git("init", "-q")
+    git("add", "-A")
+    git("-c", "user.name=test", "-c", "user.email=test@example.invalid", "-c", "commit.gpgsign=false", "commit", "-q", "-m", "data")
+    assert git("status", "--porcelain", "site/data") == ""
+
+    main([], root=root, now=NEXT_DAY)
+    assert git("status", "--porcelain", "site/data") == ""  # archived: nothing to commit
+
+    main([], root=root, now=LAST_DAY)
+    assert git("status", "--porcelain", "site/data") != ""  # a run before the end does change files, so the check means something
+
+
+def test_an_archived_run_needs_no_user_agent_and_touches_nothing(tmp_path, monkeypatch):
+    root = make_root(tmp_path, "<REPO_URL>", stop_fetching_after=STOP)
+    calls = fake_scout(monkeypatch)
+    assert main([], root=root, now=NEXT_DAY) == 0
+    assert calls == [] and not (root / "site").exists()
+
+
+def test_fixture_mode_ignores_the_stop_date(tmp_path, monkeypatch):
+    root = make_root(tmp_path, "<REPO_URL>", stop_fetching_after=STOP)
+    calls = fake_scout(monkeypatch)
+    assert main(["--fixture", str(FIXTURES / "scout_sample.json")], root=root, now=NEXT_DAY) == 0
+    assert calls == []
+    assert read(root / "site" / "data", "latest.json")["source"] == "fixture"
+
+
+@pytest.mark.parametrize("extra", [{}, {"stop_fetching_after": None}])
+def test_without_an_end_date_it_keeps_fetching(tmp_path, monkeypatch, extra):
+    root = make_root(tmp_path, REAL_URL, **extra)
+    calls = fake_scout(monkeypatch)
+    assert main([], root=root, now=datetime(2040, 1, 1, tzinfo=timezone.utc)) == 0
+    assert len(calls) == 1
+    assert read(root / "site" / "data", "latest.json")["stop_fetching_after"] is None
+
+
+@pytest.mark.parametrize("bad", ["2027-02-30", "28/02/2027", "20270228", "2027-2-28", "", " 2027-02-28", 20270228, True, ["2027-02-28"]])
+def test_a_bad_stop_date_is_a_config_error_not_a_silent_no_end_date(tmp_path, monkeypatch, capsys, bad):
+    root = make_root(tmp_path, REAL_URL, stop_fetching_after=bad)
+    calls = fake_scout(monkeypatch)
+    assert main([], root=root, now=BEFORE) == 2
+    assert "stop_fetching_after" in capsys.readouterr().err
+    assert calls == [] and not (root / "site").exists()
+
+
+def test_parse_stop_date():
+    assert parse_stop_date({}) is None
+    assert parse_stop_date({"stop_fetching_after": None}) is None
+    assert parse_stop_date({"stop_fetching_after": STOP}) == date(2027, 2, 28)
+    with pytest.raises(ConfigError, match="stop_fetching_after"):
+        parse_stop_date({"stop_fetching_after": "2027-02-30"})
+
+
+def test_is_archived_uses_the_utc_date_and_treats_the_stop_date_as_a_fetching_day():
+    stop = date(2027, 2, 28)
+    assert not is_archived(stop, LAST_DAY)
+    assert is_archived(stop, NEXT_DAY)
+    assert not is_archived(None, NEXT_DAY)
+    # 20:00 on the 28th in UTC-8 is already 04:00 UTC on 1 March, so it counts as past the date.
+    assert is_archived(stop, datetime(2027, 2, 28, 20, 0, tzinfo=timezone(timedelta(hours=-8))))
+
+
+def test_github_output_and_step_summary_for_a_skipped_run(tmp_path, monkeypatch):
+    target, summary = tmp_path / "out.txt", tmp_path / "summary.md"
+    monkeypatch.setenv("GITHUB_OUTPUT", str(target))
+    monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
+    write_github_output(True, skipped=True)
+    write_step_summary("hello")
+    assert target.read_text() == "ok=true\nskipped=true\n"
+    assert summary.read_text() == "hello\n"
+
+
+def test_the_workflow_only_goes_red_on_an_explicit_failure_and_only_commits_changed_data():
+    # A skipped run reports ok=true and changes no file; these two lines in the workflow are what turn that into
+    # "green, no commit". If someone edits them, this test says why it matters.
+    text = (ROOT / ".github" / "workflows" / "update-and-deploy.yml").read_text()
+    assert "if: needs.update.outputs.ok == 'false'" in text
+    assert "git status --porcelain site/data" in text

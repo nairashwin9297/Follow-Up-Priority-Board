@@ -1,6 +1,6 @@
 // Entry point: load our own JSON, rank it, hand the result to render.js.
 // The browser only ever reads files from this site, never the Scout API.
-import { distributionSummary, failedUpdateText, freshnessText, utcLabel } from "./format.js";
+import { archiveNotice, distributionSummary, failedUpdateText, freshnessText, utcLabel } from "./format.js";
 import {
   COLUMNS, buildChart, buildSkyMap, buildTable, buildWeightsPanel, fillHistory, renderRows, showMessage, showNote,
 } from "./render.js";
@@ -8,6 +8,7 @@ import { effectiveShares, priorityHistogram, rankObjects, sortRows, whyRankedHer
 import { skyPoints, skySummary } from "./sky.js";
 
 const $ = (id) => document.getElementById(id);
+const archiveBanner = $("archive-banner");
 const demoBanner = $("demo-banner");
 const freshnessBanner = $("freshness");
 const failedNote = $("failed-update");
@@ -21,7 +22,9 @@ const liveRegion = $("live");
 const DEMO_TEXT = "Demo data from a saved test file. This is not a live Scout snapshot.";
 const MINUTE_MS = 60 * 1000;
 
-let generatedAt = null; // kept so the banner can age while the page stays open
+let generatedAt = null; // kept so the banners can age while the page stays open
+let stopFetchingAfter = null; // last UTC day of fetching, from latest.json (null: no end date)
+let failedText = null; // the "last update attempt failed" sentence, if any
 let view = null; // everything the current screen needs, set after a successful load
 let historyRequest = null; // history.json is fetched once, and only when a row is first opened
 
@@ -33,10 +36,20 @@ async function getJson(path) {
 }
 
 // Recomputed from the clock every minute, so it keeps working even if the pipeline is dead.
-function updateFreshness() {
+// Past the end date the board is an archive: say so, and drop the "out of date" and "update failed"
+// lines. An archive is old on purpose, and those would only repeat it in red.
+function updateBanners() {
   if (generatedAt === null) return;
+  const archived = archiveNotice(stopFetchingAfter, generatedAt, Date.now());
+  showNote(archiveBanner, archived, "archived");
+  if (archived) {
+    showNote(freshnessBanner, null);
+    showNote(failedNote, null);
+    return;
+  }
   const { level, text } = freshnessText(generatedAt, Date.now());
   showNote(freshnessBanner, text, level);
+  showNote(failedNote, failedText, "failed");
 }
 
 // Screen-reader announcements (the aria-live region). Debounced so dragging a slider
@@ -126,9 +139,11 @@ function onSort(key) {
 
 async function load() {
   generatedAt = null;
+  stopFetchingAfter = null;
+  failedText = null;
   view = null;
   historyRequest = null;
-  for (const note of [demoBanner, freshnessBanner, failedNote]) showNote(note, null);
+  for (const note of [archiveBanner, demoBanner, freshnessBanner, failedNote]) showNote(note, null);
   skyHost.replaceChildren();
   weightsHost.replaceChildren();
   chartHost.replaceChildren();
@@ -160,8 +175,9 @@ async function load() {
 
   generatedAt = latest.generated_at;
   fetchedNote.textContent = `Fetched ${utcLabel(generatedAt)}.`;
-  updateFreshness();
-  showNote(failedNote, failedUpdateText(await statusRequest), "failed");
+  stopFetchingAfter = latest.stop_fetching_after ?? null;
+  failedText = failedUpdateText(await statusRequest);
+  updateBanners();
   showNote(demoBanner, latest.source === "fixture" ? DEMO_TEXT : null, "demo");
 
   if (latest.objects.length === 0) {
@@ -188,5 +204,5 @@ async function load() {
   refresh();
 }
 
-setInterval(updateFreshness, MINUTE_MS);
+setInterval(updateBanners, MINUTE_MS);
 load();

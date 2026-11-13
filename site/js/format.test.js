@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  binLabel, distributionSummary, failedUpdateText, formatNumber, formatSmart, freshness, freshnessText,
+  archiveNotice, binLabel, distributionSummary, failedUpdateText, formatNumber, formatSmart, freshness, freshnessText,
   niceTicks, relativeTime, sparklinePoints, utcLabel,
 } from "./format.js";
 
@@ -153,4 +153,40 @@ test("failedUpdateText only speaks when the last attempt failed", () => {
   assert.equal(failedUpdateText({ ok: true, last_attempt: GENERATED }), null);
   assert.equal(failedUpdateText({ ok: false, last_attempt: "2026-11-13T06:17:09Z" }),
     "The last update attempt failed at 2026-11-13 06:17 UTC.");
+});
+
+// --- the archive banner -----------------------------------------------------------------------
+
+const STOP = "2027-02-28";
+const FETCHED = "2027-02-28T18:17:09Z";
+const utcMs = (iso) => Date.parse(iso);
+
+test("archiveNotice is silent up to and including the stop date (a UTC day)", () => {
+  assert.equal(archiveNotice(STOP, FETCHED, utcMs("2026-11-13T00:00:00Z")), null);
+  assert.equal(archiveNotice(STOP, FETCHED, utcMs("2027-02-28T00:00:00Z")), null);
+  assert.equal(archiveNotice(STOP, FETCHED, utcMs("2027-02-28T23:59:59Z")), null); // still a fetching day
+});
+
+test("archiveNotice from the first UTC moment after the date says what the spec's wording says", () => {
+  assert.equal(archiveNotice(STOP, FETCHED, utcMs("2027-03-01T00:00:00Z")),
+    "This board is no longer updated. Archived on 2027-02-28; data shown is from 2027-02-28 18:17 UTC.");
+  assert.equal(archiveNotice(STOP, "2026-11-13T02:07:32Z", utcMs("2030-06-01T12:00:00Z")),
+    "This board is no longer updated. Archived on 2027-02-28; data shown is from 2026-11-13 02:07 UTC.");
+});
+
+test("archiveNotice has no end date to report for a missing or malformed value", () => {
+  for (const bad of [undefined, null, "", "2027-02-30", "28/02/2027", "20270228", "2027-2-28", " 2027-02-28", 20270228, true, {}]) {
+    assert.equal(archiveNotice(bad, FETCHED, utcMs("2035-01-01T00:00:00Z")), null, `${JSON.stringify(bad)} should not archive`);
+  }
+});
+
+test("archiveNotice still shows the notice when the fetch time is unreadable", () => {
+  assert.equal(archiveNotice(STOP, undefined, utcMs("2027-03-02T00:00:00Z")),
+    "This board is no longer updated. Archived on 2027-02-28; data shown is from an unknown time.");
+});
+
+test("archiveNotice and freshness are separate: an old fetch is red on its own, and the caller picks which to show", () => {
+  const now = utcMs("2027-03-05T00:00:00Z");
+  assert.equal(freshness(FETCHED, now).level, "stale"); // it would be red without the archive notice
+  assert.notEqual(archiveNotice(STOP, FETCHED, now), null);
 });

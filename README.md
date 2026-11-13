@@ -92,12 +92,12 @@ flowchart LR
 - **GitHub Actions** ([`update-and-deploy.yml`](.github/workflows/update-and-deploy.yml)) runs the Python and JavaScript tests, then the pipeline, commits any changed data, and deploys `site/` to GitHub Pages in the same workflow. On a push it only redeploys without fetching.
 - **Fair use.** Exactly one request per run, an application-specific `User-Agent` with contact details (from `config/app.json`), a 30 second timeout, and at most two retries (after 10 s and 30 s) on network errors or HTTP 500/503. The expected Scout API version is checked, and a mismatch only logs a warning.
 - **If a fetch fails**, `latest.json` and `history.json` are left alone, `status.json` records the failure, and the page says "The last update attempt failed". The workflow still deploys and then fails a final step, so the run shows red.
-- **Commit on every run.** Each run changes `generated_at` in `latest.json` and `last_attempt` in `status.json`, so almost every run makes a commit. That is expected. These commits should also count as repository activity, which helps with GitHub's rule that disables scheduled workflows in public repositories after 60 days without activity.
+- **Commit on every run.** Each run changes `generated_at` in `latest.json` and `last_attempt` in `status.json`, so almost every run makes a commit. That is expected. These commits should also count as repository activity, which helps with GitHub's rule that disables scheduled workflows in public repositories after 60 days without activity. After the [end date](#end-date) there are no data commits at all.
 
 ```
 .
 ├── config/
-│   ├── app.json              contact, repo URL, expected Scout version
+│   ├── app.json              contact, repo URL, expected Scout version, end date
 │   └── scoring.json          weights, thresholds, labels (single source of truth)
 ├── pipeline/                 fetch.py, parse.py, factors.py, history.py, main.py
 ├── site/
@@ -123,6 +123,7 @@ The pipeline writes these files with sorted keys and indentation, so changes sho
   "generated_at": "2026-11-13T02:07:32Z",
   "scout_version": "1.3",
   "scout_count": 50,
+  "stop_fetching_after": "2027-02-28",
   "objects": [
     {
       "objectName": "6LB3E21",
@@ -139,6 +140,7 @@ The pipeline writes these files with sorted keys and indentation, so changes sho
 ```
 
 - `source` is `"scout"` for a real fetch or `"fixture"` for the saved test file. The page shows a "Demo data from a saved test file" banner for `"fixture"`, and a real run ignores any history or status file whose source is not its own.
+- `stop_fetching_after` is the end date from `config/app.json` (or `null` if there is none). The page reads it to show its archive banner; see [End date](#end-date).
 - A factor is `null` when all of its inputs are missing. `missing` lists those factors by name (for example `"closeness"`), a factor that lost only one input as `"urgency.unc"`, and a missing `neoScore` as `"gate"`.
 - `badges` holds ids such as `orbit_uncertain`, `few_observations`, `close_approach`, `stale_scout_run` and `new`.
 - Objects are sorted by name, not by priority. The ranking is done in the browser.
@@ -171,10 +173,10 @@ A snapshot is added only when the pair (object name, `lastRun`) is new. `first_s
 
 You need a GitHub repository (a fork or your own copy) with GitHub Pages and Actions available.
 
-1. **Set your details.** Edit [`config/app.json`](config/app.json): set `repo_url` to your repository's URL and `contact` to an email address. They go into the `User-Agent` that JPL's fair-use policy asks for. A real fetch refuses to run while either one is still a `<...>` placeholder.
+1. **Set your details.** Edit [`config/app.json`](config/app.json): set `repo_url` to your repository's URL and `contact` to an email address. They go into the `User-Agent` that JPL's fair-use policy asks for. A real fetch refuses to run while either one is still a `<...>` placeholder. Also look at `stop_fetching_after`, the date after which the board stops fetching (see [End date](#end-date)).
 2. **Turn on Pages.** In the repository, go to Settings → Pages and set Source to **GitHub Actions**.
 3. **Push to `main`.** The first run is triggered by the push, which only redeploys the site (it skips the Scout fetch).
-4. **Fetch real data.** In the Actions tab, open **Update and deploy** and choose **Run workflow** from `main`. After that it runs on its own every 6 hours (at minute 17).
+4. **Fetch real data.** In the Actions tab, open **Update and deploy** and choose **Run workflow** from `main`. After that it runs on its own every 6 hours (at minute 17) until the [end date](#end-date).
 
 The workflow uses the official `actions/*` actions at their current major versions (checkout v7, setup-python v7, setup-node v7, configure-pages v6, upload-pages-artifact v5, deploy-pages v5), Python 3.12 and Node 26, which was the current LTS when this was written.
 
@@ -197,6 +199,24 @@ python3 -m http.server --directory site 8000     # then open http://localhost:80
 ```
 
 To fetch real data locally, run `.venv/bin/python -m pipeline.main`. It makes one request to Scout, so please do not run it in a loop. It needs `repo_url` and `contact` set in `config/app.json`. Either command overwrites `site/data/`.
+
+## End date
+
+The board stops updating itself on a set date. `config/app.json` has `"stop_fetching_after": "2027-02-28"`, a UTC date.
+
+**What happens.** The date itself is still a fetching day. From the next UTC day on, a real run (scheduled or manual) makes no request to Scout, changes no file, and so makes no commit. The run still redeploys the existing site and finishes green, and its summary page says the fetch was skipped. Demo runs with `--fixture` ignore the date. A date that is not a real `YYYY-MM-DD` day makes the run fail loudly instead of quietly meaning "no end date".
+
+**On the page.** Once the date has passed, a banner says: "This board is no longer updated. Archived on _date_; data shown is from _last fetch time_." In that state the page drops its red "out of date" and "last update attempt failed" lines, since an archive is old on purpose. The page gets the date from `stop_fetching_after` in `latest.json` (it cannot read `config/app.json`), so the banner appears by itself even after the pipeline has stopped running.
+
+**Why it exists.** This is a demo, and I do not want an unattended script calling JPL's API forever. Its fair-use policy asks for requests to be limited to those reasonably necessary and for automated processes not to make unnecessarily frequent or repetitive requests. A board that says it is an archive is also clearer than one that quietly goes stale.
+
+**How to extend it.**
+
+1. Change `stop_fetching_after` in `config/app.json` to a later date and push to `main`. The push redeploys the site but does not fetch.
+2. Run the workflow once by hand (Actions, Update and deploy, Run workflow), or wait for the next scheduled run. The banner is driven by the date saved in the last fetched data, so it disappears after the first fetch that writes the new date.
+3. If the schedule has stopped, turn it back on in the Actions tab. Once data commits end, GitHub can disable scheduled workflows after 60 days without repository activity.
+
+Setting a date in the past skips fetching right away, but the page's banner only changes when a fetch writes `latest.json`, and a skipped run writes nothing. To archive early, also set `stop_fetching_after` in `site/data/latest.json` to the same date.
 
 ## Accessibility
 

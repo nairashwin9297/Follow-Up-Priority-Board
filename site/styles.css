@@ -106,6 +106,7 @@ h1 { margin: 0 0 0.25rem; font-size: 1.5rem; letter-spacing: 0.01em; }
 .banner[data-level="stale"],
 .banner[data-level="unknown"],
 .banner[data-level="failed"] { background: var(--banner-stale-bg); color: var(--banner-stale-text); }
+.banner[data-level="archived"] { font-weight: 600; } /* neutral colors: an archive is not an alarm */
 .banner[data-level="demo"] { background: var(--banner-demo-bg); color: var(--banner-demo-text); font-weight: 600; }
 
 main { margin-top: 1rem; }

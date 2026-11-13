@@ -5,13 +5,17 @@
 
 A Scout failure exits 0 but records ok=false, so CI can deploy first and then
 turn red. A config error exits 2 before any file is touched.
+
+Once the UTC date in config/app.json "stop_fetching_after" has passed, a real run does nothing: it
+makes no request, changes no file (so the workflow has nothing to commit) and exits 0.
 """
 import argparse
 import json
 import logging
 import os
+import re
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from .factors import compute_object
@@ -52,12 +56,47 @@ def write_json_atomic(path, data):
     os.replace(tmp, path)  # atomic on the same filesystem
 
 
-def write_github_output(ok):
-    """Tell the workflow whether the fetch worked (no-op outside GitHub Actions)."""
+def write_github_output(ok, skipped=False):
+    """Tell the workflow whether the fetch worked (no-op outside GitHub Actions).
+
+    A skipped run (past the stop date) reports ok=true: nothing went wrong, so the workflow stays green.
+    """
     path = os.environ.get("GITHUB_OUTPUT")
     if path:
         with open(path, "a") as f:
             f.write(f"ok={'true' if ok else 'false'}\n")
+            if skipped:
+                f.write("skipped=true\n")
+
+
+def write_step_summary(text):
+    """Put a line on the workflow run's summary page, so a skipped run explains itself (no-op locally)."""
+    path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if path:
+        with open(path, "a") as f:
+            f.write(text + "\n")
+
+
+def parse_stop_date(config):
+    """The last UTC day on which a real run may fetch, or None when there is no end date.
+
+    Strictly YYYY-MM-DD: Python's date.fromisoformat would also accept forms like 20270228.
+    A bad value is a config error (the run fails loudly) rather than quietly meaning "no end date".
+    """
+    value = config.get("stop_fetching_after")
+    if value is None:
+        return None
+    if isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        try:
+            return date.fromisoformat(value)
+        except ValueError:  # the right shape but not a real day, like 2027-02-30
+            pass
+    raise ConfigError(f"config/app.json: stop_fetching_after must be a date like 2027-02-28 (got {value!r})")
+
+
+def is_archived(stop_date, now):
+    """True once the UTC date is later than the stop date. The stop date itself is still a fetching day."""
+    return stop_date is not None and now.astimezone(timezone.utc).date() > stop_date
 
 
 def run(config, scoring, out_dir, now, load_payload, source):
@@ -105,6 +144,9 @@ def run(config, scoring, out_dir, now, load_payload, source):
         "generated_at": generated_at,
         "scout_version": parsed["scout_version"],
         "scout_count": parsed["scout_count"],
+        # The page reads this (it can't read config/app.json) to show its "archived" banner after the date,
+        # even once this pipeline has stopped running.
+        "stop_fetching_after": config.get("stop_fetching_after"),
         "objects": objects,
     }
     write_json_atomic(out_dir / "history.json", history)
@@ -117,7 +159,7 @@ def run(config, scoring, out_dir, now, load_payload, source):
     return True
 
 
-def main(argv=None, root=REPO_ROOT):
+def main(argv=None, root=REPO_ROOT, now=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--fixture", type=Path,
                         help="read this JSON file instead of calling Scout")
@@ -129,6 +171,23 @@ def main(argv=None, root=REPO_ROOT):
     if config is None or scoring is None:
         print("config error: config/app.json or config/scoring.json is missing", file=sys.stderr)
         return 2
+
+    try:
+        stop_date = parse_stop_date(config)
+    except ConfigError as e:
+        print(f"config error: {e}", file=sys.stderr)
+        return 2
+    now = now or datetime.now(timezone.utc).replace(microsecond=0)
+
+    # Past the stop date a real run (scheduled or manual) does nothing at all: no request, no file written,
+    # so there is nothing to commit. Fixture runs are local demos and ignore the date.
+    if not args.fixture and is_archived(stop_date, now):
+        message = (f"Scout fetch skipped: the stop date ({stop_date.isoformat()}) has passed, so this board is "
+                   "archived. No data files were changed. To resume, move stop_fetching_after in config/app.json.")
+        log.info(message)
+        write_step_summary(message)
+        write_github_output(True, skipped=True)
+        return 0
 
     if args.fixture:
         def load_payload():
@@ -143,7 +202,6 @@ def main(argv=None, root=REPO_ROOT):
         def load_payload():
             return fetch_scout(config["scout_url"], user_agent)
 
-    now = datetime.now(timezone.utc).replace(microsecond=0)
     source = "fixture" if args.fixture else "scout"
     ok = run(config, scoring, root / "site" / "data", now, load_payload, source)
     write_github_output(ok)

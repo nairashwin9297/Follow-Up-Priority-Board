@@ -96,6 +96,18 @@ export function freshness(generatedAt, nowMs) {
   return { level, ageMs };
 }
 
+// After the end date the board is an archive. The page says so, and the caller drops its "out of date"
+// warnings, which would only repeat the same news in red. `stopAfter` is the last UTC day of fetching,
+// "YYYY-MM-DD", as written into latest.json; anything else (including a missing value) means no end date.
+export function archiveNotice(stopAfter, generatedAt, nowMs) {
+  if (typeof stopAfter !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(stopAfter)) return null;
+  // A real calendar day? (new Date would roll 2027-02-30 over to March, so check it round-trips.)
+  if (new Date(`${stopAfter}T00:00:00Z`).toISOString().slice(0, 10) !== stopAfter) return null;
+  const today = new Date(nowMs).toISOString().slice(0, 10); // today's UTC date
+  if (today <= stopAfter) return null; // the stop date itself is still a fetching day
+  return `This board is no longer updated. Archived on ${stopAfter}; data shown is from ${utcLabel(generatedAt)}.`;
+}
+
 // The words carry the meaning; color is only an extra cue.
 export function freshnessText(generatedAt, nowMs) {
   const { level, ageMs } = freshness(generatedAt, nowMs);
