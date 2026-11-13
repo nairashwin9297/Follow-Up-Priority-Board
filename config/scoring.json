@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "weights": {
+    "urgency": 0.30,
+    "sparse": 0.20,
+    "pha": 0.20,
+    "observability": 0.15,
+    "closeness": 0.15
+  },
+  "factors": {
+    "urgency": {
+      "label": "Position uncertainty growing",
+      "why": "position uncertainty growing fast",
+      "uncP1_lo_arcmin": 1,
+      "uncP1_hi_arcmin": 600,
+      "level_weight": 0.7,
+      "growth_weight": 0.3,
+      "growth_full_decades": 1
+    },
+    "sparse": {
+      "label": "Few observations / short arc",
+      "why": "few observations",
+      "nObs_min": 3,
+      "nObs_max": 20,
+      "nObs_weight": 0.5,
+      "arc_lo_h": 0.5,
+      "arc_hi_h": 72,
+      "arc_weight": 0.5
+    },
+    "pha": {
+      "label": "PHA likelihood (Scout)",
+      "why": "high PHA likelihood (Scout)"
+    },
+    "observability": {
+      "label": "Brightness & sky position (coarse, not site-specific)",
+      "why": "bright and well placed in the sky",
+      "vmag_bright": 18,
+      "vmag_faint": 24,
+      "vmag_weight": 0.6,
+      "elong_min_deg": 45,
+      "elong_max_deg": 135,
+      "elong_weight": 0.4
+    },
+    "closeness": {
+      "label": "Close approach (caDist, else MOID)",
+      "why": "close approach distance",
+      "ld_lo": 0.1,
+      "ld_hi": 100,
+      "au_to_ld": 389.17
+    }
+  },
+  "gate": {
+    "low_neo_score": 50,
+    "low_neo_text": "Scout rates it unlikely to be a NEO."
+  },
+  "badges": {
+    "orbit_uncertain": { "label": "Orbit uncertain", "uncP1_gt_arcmin": 60 },
+    "few_observations": { "label": "Few observations", "nObs_lt": 6, "arc_lt_h": 2 },
+    "close_approach": { "label": "Close approach", "caDist_lt_ld": 5 },
+    "stale_scout_run": { "label": "Stale Scout run", "lastRun_older_than_h": 24 },
+    "new": { "label": "New" }
+  },
+  "missing_label": "missing data"
+}
