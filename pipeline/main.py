@@ -27,6 +27,22 @@ def read_json(path, default):
     return json.loads(path.read_text()) if path.exists() else default
 
 
+def read_same_source(path, source, default):
+    """Read a state file, but only trust it if the same kind of run wrote it.
+
+    Demo (fixture) data must never leak into real history or status, so a file
+    from the other source, or an old one with no source field, counts as absent.
+    """
+    data = read_json(path, None)
+    if data is None:
+        return default
+    if data.get("source") != source:
+        log.warning("Ignoring %s: written by source %r but this run is %r; "
+                    "treating it as empty (first run)", path.name, data.get("source"), source)
+        return default
+    return data
+
+
 def write_json_atomic(path, data):
     """Write to a temp file, then rename, so a crash never leaves half a file."""
     # sort_keys + indent keep git diffs readable; allow_nan=False refuses invalid JSON.
@@ -44,11 +60,15 @@ def write_github_output(ok):
             f.write(f"ok={'true' if ok else 'false'}\n")
 
 
-def run(config, scoring, out_dir, now, load_payload):
-    """One pipeline run. Returns True on success, False if Scout data was rejected."""
+def run(config, scoring, out_dir, now, load_payload, source):
+    """One pipeline run. Returns True on success, False if Scout data was rejected.
+
+    source is "scout" for a real fetch or "fixture" for a saved test file.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
-    old_status = read_json(out_dir / "status.json", {})
+    old_status = read_same_source(out_dir / "status.json", source, {})
     status = {
+        "source": source,
         "last_attempt": to_iso(now),
         "last_success": old_status.get("last_success"),
     }
@@ -63,7 +83,7 @@ def run(config, scoring, out_dir, now, load_payload):
         write_json_atomic(out_dir / "status.json", status)
         return False
 
-    history = read_json(out_dir / "history.json", empty_history())
+    history = read_same_source(out_dir / "history.json", source, empty_history(source))
     # With no history every object would look "new", which says nothing useful.
     first_run = not history["objects"]
     history = update_history(history, parsed["objects"], now)
@@ -81,6 +101,7 @@ def run(config, scoring, out_dir, now, load_payload):
 
     latest = {
         "schema_version": 1,
+        "source": source,
         "generated_at": generated_at,
         "scout_version": parsed["scout_version"],
         "scout_count": parsed["scout_count"],
@@ -123,7 +144,8 @@ def main(argv=None, root=REPO_ROOT):
             return fetch_scout(config["scout_url"], user_agent)
 
     now = datetime.now(timezone.utc).replace(microsecond=0)
-    ok = run(config, scoring, root / "site" / "data", now, load_payload)
+    source = "fixture" if args.fixture else "scout"
+    ok = run(config, scoring, root / "site" / "data", now, load_payload, source)
     write_github_output(ok)
     return 0
 

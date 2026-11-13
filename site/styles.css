@@ -1,0 +1,144 @@
+/* Dark-first "control room" look, light theme via prefers-color-scheme.
+   Every color is a custom property so both themes live in two small blocks. */
+:root {
+  --bg: #0b1020;
+  --surface: #121a2e;
+  --surface-alt: #172139;
+  --text: #e6ebf5;
+  --text-muted: #a9b4cc;
+  --border: #2d3a5a;
+  --accent: #7cc0ff;
+  --focus: #ffd166;
+  --banner-fresh-bg: #172139;
+  --banner-fresh-text: #e6ebf5;
+  --banner-aging-bg: #3b2c06;
+  --banner-aging-text: #ffd98a;
+  --banner-stale-bg: #451519;
+  --banner-stale-text: #ffc2c2;
+  --banner-demo-bg: #1f2d57;
+  --banner-demo-text: #d4e4ff;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-alt: #eaeff8;
+    --text: #111827;
+    --text-muted: #4a5568;
+    --border: #b9c2d6;
+    --accent: #0b5cad;
+    --focus: #8a4b00;
+    --banner-fresh-bg: #eaeff8;
+    --banner-fresh-text: #111827;
+    --banner-aging-bg: #fff1c2;
+    --banner-aging-text: #5a4200;
+    --banner-stale-bg: #fde0e0;
+    --banner-stale-text: #7a1212;
+    --banner-demo-bg: #dde8ff;
+    --banner-demo-text: #10306b;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  padding: 1rem;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+header, main { max-width: 72rem; margin: 0 auto; }
+h1 { margin: 0 0 0.25rem; font-size: 1.5rem; letter-spacing: 0.01em; }
+.honesty { margin: 0 0 1rem; color: var(--text-muted); }
+
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -4rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.skip-link:focus { top: 0.5rem; }
+
+/* Banners: the wording carries the meaning; the left bar and tint are extra cues. */
+.banner {
+  margin: 0 0 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-left: 6px solid currentColor; /* takes each level's text color */
+  border-radius: 4px;
+  background: var(--banner-fresh-bg);
+  color: var(--banner-fresh-text);
+}
+.banner[data-level="aging"] { background: var(--banner-aging-bg); color: var(--banner-aging-text); }
+.banner[data-level="stale"],
+.banner[data-level="unknown"],
+.banner[data-level="failed"] { background: var(--banner-stale-bg); color: var(--banner-stale-text); }
+.banner[data-level="demo"] { background: var(--banner-demo-bg); color: var(--banner-demo-text); font-weight: 600; }
+
+main { margin-top: 1rem; }
+
+.message {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+}
+.message p { margin: 0 0 0.5rem; }
+.message-title { font-weight: 600; }
+.message-error { border-left: 6px solid var(--banner-stale-text); }
+
+button {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--surface-alt);
+  color: var(--accent);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* The table scrolls inside its own box on narrow screens, not the whole page. */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+}
+
+table { width: 100%; border-collapse: collapse; }
+caption { padding: 0.5rem 0.75rem; text-align: left; color: var(--text-muted); }
+th, td { padding: 0.4rem 0.75rem; border-top: 1px solid var(--border); text-align: left; vertical-align: top; }
+thead th { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; white-space: normal; }
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+
+/* Monospace + tabular digits keep columns of numbers aligned. */
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+thead th:not(:nth-child(2)) { text-align: right; }
+th.object { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+.rank { color: var(--text-muted); }
+
+.flag {
+  margin-left: 0.25rem;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: system-ui, sans-serif;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>Follow-Up Priority Board</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#board-content">Skip to the table</a>
+
+  <header>
+    <h1>Follow-Up Priority Board</h1>
+    <p class="honesty">
+      All objects are unconfirmed candidates; some may not be real.
+      Priority is an illustrative heuristic I designed, not an official method.
+    </p>
+    <!-- These stay hidden until app.js has something to say. -->
+    <p id="demo-banner" class="banner" hidden></p>
+    <p id="freshness" class="banner" hidden></p>
+    <p id="failed-update" class="banner" hidden></p>
+  </header>
+
+  <main>
+    <div id="board-content">
+      <!-- Without JavaScript this text stays; app.js replaces it. -->
+      <p>This page needs JavaScript to load and rank the data.</p>
+    </div>
+  </main>
+</body>
+</html>

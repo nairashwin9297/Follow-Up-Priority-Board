@@ -12,8 +12,9 @@ RETENTION_DAYS = 30
 SNAPSHOT_FIELDS = ("nObs", "arc", "unc", "uncP1", "neoScore")
 
 
-def empty_history():
-    return {"schema_version": 1, "objects": {}}
+def empty_history(source):
+    """source is "scout" or "fixture". It travels with the file so demo data can't pass as real."""
+    return {"schema_version": 1, "source": source, "objects": {}}
 
 
 def update_history(history, objects, now):

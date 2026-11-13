@@ -13,12 +13,17 @@ A, B = OBJECTS[0], OBJECTS[1]
 T0 = datetime(2026, 11, 12, 12, 0, tzinfo=timezone.utc)
 
 
-def test_empty_history_shape():
-    assert empty_history() == {"schema_version": 1, "objects": {}}
+def test_empty_history_shape_records_its_source():
+    assert empty_history("scout") == {"schema_version": 1, "source": "scout", "objects": {}}
+    assert empty_history("fixture")["source"] == "fixture"
+
+
+def test_update_keeps_the_source():
+    assert update_history(empty_history("fixture"), [A], T0)["source"] == "fixture"
 
 
 def test_first_run_records_every_object_once():
-    history = update_history(empty_history(), OBJECTS, T0)
+    history = update_history(empty_history("scout"), OBJECTS, T0)
     assert set(history["objects"]) == {o["objectName"] for o in OBJECTS}
     entry = history["objects"][A["objectName"]]
     assert entry["first_seen"] == entry["last_seen"] == to_iso(T0)
@@ -29,7 +34,7 @@ def test_first_run_records_every_object_once():
 
 
 def test_same_lastRun_does_not_add_a_snapshot_but_updates_last_seen():
-    first = update_history(empty_history(), [A], T0)
+    first = update_history(empty_history("scout"), [A], T0)
     later = T0 + timedelta(hours=6)
     second = update_history(first, [A], later)
     entry = second["objects"][A["objectName"]]
@@ -39,7 +44,7 @@ def test_same_lastRun_does_not_add_a_snapshot_but_updates_last_seen():
 
 
 def test_new_lastRun_appends_and_first_seen_stays_put():
-    first = update_history(empty_history(), [A], T0)
+    first = update_history(empty_history("scout"), [A], T0)
     rerun = {**A, "lastRun": "2026-11-13T03:00:00Z", "nObs": A["nObs"] + 4}
     second = update_history(first, [rerun], T0 + timedelta(hours=6))
     entry = second["objects"][A["objectName"]]
@@ -49,21 +54,21 @@ def test_new_lastRun_appends_and_first_seen_stays_put():
 
 
 def test_missing_lastRun_records_presence_without_a_snapshot():
-    history = update_history(empty_history(), [{**A, "lastRun": None}], T0)
+    history = update_history(empty_history("scout"), [{**A, "lastRun": None}], T0)
     entry = history["objects"][A["objectName"]]
     assert entry["snapshots"] == []
     assert entry["first_seen"] == to_iso(T0)
 
 
 def test_unlisted_object_keeps_its_old_last_seen():
-    first = update_history(empty_history(), [A, B], T0)
+    first = update_history(empty_history("scout"), [A, B], T0)
     second = update_history(first, [B], T0 + timedelta(days=1))
     assert second["objects"][A["objectName"]]["last_seen"] == to_iso(T0)
     assert second["objects"][B["objectName"]]["last_seen"] == to_iso(T0 + timedelta(days=1))
 
 
 def test_pruning_drops_objects_last_seen_over_30_days_ago():
-    first = update_history(empty_history(), [A, B], T0)
+    first = update_history(empty_history("scout"), [A, B], T0)
     just_over = T0 + timedelta(days=RETENTION_DAYS, seconds=1)
     pruned = update_history(first, [B], just_over)
     assert A["objectName"] not in pruned["objects"]
@@ -71,19 +76,19 @@ def test_pruning_drops_objects_last_seen_over_30_days_ago():
 
 
 def test_pruning_keeps_objects_at_exactly_30_days():
-    first = update_history(empty_history(), [A, B], T0)
+    first = update_history(empty_history("scout"), [A, B], T0)
     kept = update_history(first, [B], T0 + timedelta(days=RETENTION_DAYS))
     assert A["objectName"] in kept["objects"]
 
 
 def test_currently_listed_object_is_never_pruned():
-    first = update_history(empty_history(), [A], T0)
+    first = update_history(empty_history("scout"), [A], T0)
     later = update_history(first, [A], T0 + timedelta(days=90))
     assert A["objectName"] in later["objects"]
 
 
 def test_object_that_returns_within_30_days_keeps_first_seen():
-    first = update_history(empty_history(), [A], T0)
+    first = update_history(empty_history("scout"), [A], T0)
     gone = update_history(first, [B], T0 + timedelta(days=10))
     back = update_history(gone, [A], T0 + timedelta(days=20))
     entry = back["objects"][A["objectName"]]
@@ -92,7 +97,7 @@ def test_object_that_returns_within_30_days_keeps_first_seen():
 
 
 def test_input_history_is_not_mutated():
-    first = update_history(empty_history(), [A], T0)
+    first = update_history(empty_history("scout"), [A], T0)
     snapshot = copy.deepcopy(first)
     update_history(first, [A, B], T0 + timedelta(days=40))
     assert first == snapshot

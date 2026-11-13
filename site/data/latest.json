@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T01:41:25Z",
+  "generated_at": "2026-11-13T01:46:14Z",
   "objects": [
     {
       "badges": [],
@@ -11,7 +11,7 @@
         "sparse": 0.2987,
         "urgency": 0.2334
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.02,
       "missing": [],
       "objectName": "6LB3E21",
@@ -55,7 +55,7 @@
         "sparse": 0.7375,
         "urgency": 0.6507
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "C1H4UL5",
@@ -99,7 +99,7 @@
         "sparse": 0.7535,
         "urgency": 0.373
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "C1HGCE5",
@@ -143,7 +143,7 @@
         "sparse": 0.9706,
         "urgency": 0.3353
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.57,
       "missing": [],
       "objectName": "C1MRJDP",
@@ -188,7 +188,7 @@
         "sparse": 0.7855,
         "urgency": 0.6009
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "C46R2K1",
@@ -232,7 +232,7 @@
         "sparse": 0.015,
         "urgency": 0.0
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "C46RRJ1",
@@ -275,7 +275,7 @@
         "sparse": 0.0,
         "urgency": 0.0
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "CF001T2",
@@ -316,7 +316,7 @@
         "sparse": 0.0,
         "urgency": 0.0
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF00UQ2",
@@ -357,7 +357,7 @@
         "sparse": 0.1176,
         "urgency": 0.0903
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "CF01F02",
@@ -400,7 +400,7 @@
         "sparse": 0.3509,
         "urgency": 0.095
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.29,
       "missing": [],
       "objectName": "CF05L22",
@@ -441,7 +441,7 @@
         "sparse": 0.0408,
         "urgency": 0.1194
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF05XQ2",
@@ -482,7 +482,7 @@
         "sparse": 0.045,
         "urgency": 0.1431
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF06QE2",
@@ -523,7 +523,7 @@
         "sparse": 0.1039,
         "urgency": 0.1594
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF0EDE2",
@@ -564,7 +564,7 @@
         "sparse": 0.2326,
         "urgency": 0.2535
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "CF0LX22",
@@ -607,7 +607,7 @@
         "sparse": 0.59,
         "urgency": 0.115
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.42,
       "missing": [],
       "objectName": "CF0VQY2",
@@ -648,7 +648,7 @@
         "sparse": 0.3516,
         "urgency": 0.2566
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF10KQ2",
@@ -691,7 +691,7 @@
         "sparse": 0.1925,
         "urgency": 0.3
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF12FE2",
@@ -732,7 +732,7 @@
         "sparse": 0.3587,
         "urgency": 0.3
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF19232",
@@ -773,7 +773,7 @@
         "sparse": 0.477,
         "urgency": 0.2819
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF19WV2",
@@ -816,7 +816,7 @@
         "sparse": 0.5921,
         "urgency": 0.3593
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF1AR62",
@@ -857,7 +857,7 @@
         "sparse": 0.3825,
         "urgency": 0.3
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.04,
       "missing": [],
       "objectName": "CF1GVF2",
@@ -898,7 +898,7 @@
         "sparse": 0.5872,
         "urgency": 0.2854
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF1GVG2",
@@ -939,7 +939,7 @@
         "sparse": 0.0882,
         "urgency": 0.1569
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF1ND02",
@@ -980,7 +980,7 @@
         "sparse": 0.5742,
         "urgency": 0.528
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF1NQC2",
@@ -1023,7 +1023,7 @@
         "sparse": 0.7346,
         "urgency": 0.1923
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.71,
       "missing": [],
       "objectName": "CF1R882",
@@ -1068,7 +1068,7 @@
         "sparse": 1.0,
         "urgency": 0.6565
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF1U9F2",
@@ -1109,7 +1109,7 @@
         "sparse": 0.3427,
         "urgency": 0.2097
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "JAS4340",
@@ -1152,7 +1152,7 @@
         "sparse": 1.0,
         "urgency": 0.3682
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.9,
       "missing": [],
       "objectName": "JAS5063",
@@ -1197,7 +1197,7 @@
         "sparse": 0.8451,
         "urgency": 0.6635
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "LVY0049",
@@ -1242,7 +1242,7 @@
         "sparse": 0.9115,
         "urgency": 0.6976
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "LVc0060",
@@ -1288,7 +1288,7 @@
         "sparse": 0.8129,
         "urgency": 0.7
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "LVe0046",
@@ -1332,7 +1332,7 @@
         "sparse": 0.8155,
         "urgency": 0.6869
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "LVf0020",
@@ -1376,7 +1376,7 @@
         "sparse": 0.88,
         "urgency": 0.7076
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "LVf0080",
@@ -1420,7 +1420,7 @@
         "sparse": 0.9149,
         "urgency": 0.6988
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "LVf0085",
@@ -1463,7 +1463,7 @@
         "sparse": 0.3235,
         "urgency": 0.0528
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "MVdJ978",
@@ -1504,7 +1504,7 @@
         "sparse": 0.2941,
         "urgency": 0.0528
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "OTO0813",
@@ -1545,7 +1545,7 @@
         "sparse": 0.3839,
         "urgency": 0.1222
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "P12s0JA",
@@ -1586,7 +1586,7 @@
         "sparse": 0.2048,
         "urgency": 0.1057
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "P12s0Kd",
@@ -1629,7 +1629,7 @@
         "sparse": 0.3623,
         "urgency": 0.1018
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.02,
       "missing": [],
       "objectName": "P22s0K5",
@@ -1672,7 +1672,7 @@
         "sparse": 0.1302,
         "urgency": 0.0807
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "P22s0K6",
@@ -1717,7 +1717,7 @@
         "sparse": 1.0,
         "urgency": 0.6475
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "PDO0269",
@@ -1762,7 +1762,7 @@
         "sparse": 1.0,
         "urgency": 0.5714
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "STO1551",
@@ -1805,7 +1805,7 @@
         "sparse": 0.3066,
         "urgency": 0.3927
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "Sar2981",
@@ -1849,7 +1849,7 @@
         "sparse": 0.9706,
         "urgency": 0.7296
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "WMT0011",
@@ -1893,7 +1893,7 @@
         "sparse": 0.9706,
         "urgency": 0.5817
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.89,
       "missing": [],
       "objectName": "WMT0012",
@@ -1936,7 +1936,7 @@
         "sparse": 0.9706,
         "urgency": 0.3797
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.49,
       "missing": [],
       "objectName": "WMT0013",
@@ -1980,7 +1980,7 @@
         "sparse": 0.9706,
         "urgency": 0.6706
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "WMT0014",
@@ -2025,7 +2025,7 @@
         "sparse": 0.9221,
         "urgency": 0.8714
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "ZTF10Hn",
@@ -2070,7 +2070,7 @@
         "sparse": 0.8663,
         "urgency": 0.6363
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 0.99,
       "missing": [],
       "objectName": "ZTF10Hq",
@@ -2116,7 +2116,7 @@
         "sparse": 0.9298,
         "urgency": 0.7
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "ZTF10Hw",
@@ -2161,7 +2161,7 @@
         "sparse": 0.9647,
         "urgency": 0.7299
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "ZTF10I0",
@@ -2207,7 +2207,7 @@
         "sparse": 0.9706,
         "urgency": 0.7
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "ZTF10I3",
@@ -2252,7 +2252,7 @@
         "sparse": 0.7373,
         "urgency": 0.7702
       },
-      "first_seen": "2026-11-13T01:41:25Z",
+      "first_seen": "2026-11-13T01:46:14Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "ZTF10I7",
@@ -2286,5 +2286,6 @@
   ],
   "schema_version": 1,
   "scout_count": 53,
-  "scout_version": "1.3"
+  "scout_version": "1.3",
+  "source": "fixture"
 }

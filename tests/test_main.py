@@ -33,8 +33,8 @@ def first_rows(n):
     return {**SAMPLE, "count": str(n), "data": SAMPLE["data"][:n]}
 
 
-def do_run(out, payload, now=T0):
-    return run(CONFIG, SCORING, out, now, lambda: payload)
+def do_run(out, payload, now=T0, source="fixture"):
+    return run(CONFIG, SCORING, out, now, lambda: payload, source)
 
 
 def failing(error):
@@ -108,6 +108,65 @@ def test_empty_scout_list_is_a_success(tmp_path):
     assert read(tmp_path, "status.json")["ok"] is True
 
 
+# --- Source: demo data must never pass as real -------------------------------------
+
+def test_every_output_file_records_its_source(tmp_path):
+    for source in ("fixture", "scout"):
+        out = tmp_path / source
+        do_run(out, SAMPLE, source=source)
+        for name in ("latest.json", "history.json", "status.json"):
+            assert read(out, name)["source"] == source, (source, name)
+
+
+def test_a_real_run_ignores_fixture_history_and_says_so(tmp_path, caplog):
+    do_run(tmp_path, SAMPLE, source="fixture")
+    later = T0 + timedelta(hours=6)
+    with caplog.at_level("WARNING"):
+        assert do_run(tmp_path, first_rows(10), now=later, source="scout") is True
+    assert "history.json" in caplog.text and "'fixture'" in caplog.text
+
+    history = read(tmp_path, "history.json")
+    assert history["source"] == "scout"
+    assert len(history["objects"]) == 10  # the other 43 fixture objects did not carry over
+    assert all(e["first_seen"] == to_iso(later) for e in history["objects"].values())
+    # Treated as a first run, so nothing is "new".
+    assert all("new" not in o["badges"] for o in read(tmp_path, "latest.json")["objects"])
+
+
+def test_history_with_no_source_field_is_not_trusted_by_a_real_run(tmp_path):
+    do_run(tmp_path, SAMPLE, source="scout")
+    history = read(tmp_path, "history.json")
+    del history["source"]  # what files written before this field existed look like
+    (tmp_path / "history.json").write_text(json.dumps(history))
+    do_run(tmp_path, first_rows(10), now=T0 + timedelta(hours=6), source="scout")
+    assert len(read(tmp_path, "history.json")["objects"]) == 10
+
+
+def test_a_fixture_run_does_not_mix_into_real_history(tmp_path):
+    do_run(tmp_path, SAMPLE, source="scout")
+    do_run(tmp_path, first_rows(10), now=T0 + timedelta(hours=6), source="fixture")
+    history = read(tmp_path, "history.json")
+    assert history["source"] == "fixture" and len(history["objects"]) == 10
+
+
+def test_same_source_history_still_accumulates(tmp_path):
+    do_run(tmp_path, first_rows(10), source="scout")
+    do_run(tmp_path, SAMPLE, now=T0 + timedelta(hours=6), source="scout")
+    assert len(read(tmp_path, "history.json")["objects"]) == 53
+
+
+def test_failed_real_run_does_not_inherit_fixture_status(tmp_path):
+    do_run(tmp_path, SAMPLE, source="fixture")
+    latest_before = (tmp_path / "latest.json").read_bytes()
+    t1 = T0 + timedelta(hours=6)
+    assert run(CONFIG, SCORING, tmp_path, t1, failing(FetchError("HTTP 503")), "scout") is False
+    status = read(tmp_path, "status.json")
+    assert status["source"] == "scout"
+    assert status["consecutive_failures"] == 1
+    assert status["last_success"] is None  # the fixture "success" is not a real one
+    assert (tmp_path / "latest.json").read_bytes() == latest_before  # data untouched, still labeled fixture
+
+
 # --- Failure behavior ---------------------------------------------------------
 
 def test_fetch_failure_leaves_data_untouched_and_counts_failures(tmp_path):
@@ -115,14 +174,14 @@ def test_fetch_failure_leaves_data_untouched_and_counts_failures(tmp_path):
     before = {name: (tmp_path / name).read_bytes() for name in ("latest.json", "history.json")}
 
     t1, t2 = T0 + timedelta(hours=6), T0 + timedelta(hours=12)
-    assert run(CONFIG, SCORING, tmp_path, t1, failing(FetchError("HTTP 503"))) is False
+    assert run(CONFIG, SCORING, tmp_path, t1, failing(FetchError("HTTP 503")), "fixture") is False
     status = read(tmp_path, "status.json")
     assert status["ok"] is False and status["consecutive_failures"] == 1
     assert status["last_attempt"] == to_iso(t1)
     assert status["last_success"] == to_iso(T0)
     assert "HTTP 503" in status["message"]
 
-    assert run(CONFIG, SCORING, tmp_path, t2, failing(FetchError("HTTP 503"))) is False
+    assert run(CONFIG, SCORING, tmp_path, t2, failing(FetchError("HTTP 503")), "fixture") is False
     assert read(tmp_path, "status.json")["consecutive_failures"] == 2
     for name, content in before.items():
         assert (tmp_path / name).read_bytes() == content, name
@@ -194,7 +253,9 @@ def test_fixture_mode_never_needs_the_user_agent(tmp_path, monkeypatch):
     root = make_root(tmp_path, "<REPO_URL>")
     monkeypatch.setattr(pipeline_main, "fetch_scout", lambda *a, **k: pytest.fail("fetched"))
     assert main(["--fixture", str(FIXTURES / "scout_sample.json")], root=root) == 0
-    assert read(root / "site" / "data", "status.json")["ok"] is True
+    out = root / "site" / "data"
+    assert read(out, "status.json")["ok"] is True
+    assert read(out, "latest.json")["source"] == "fixture"
 
 
 def test_real_fetch_sends_the_configured_user_agent_once(tmp_path, monkeypatch):
@@ -207,6 +268,7 @@ def test_real_fetch_sends_the_configured_user_agent_once(tmp_path, monkeypatch):
 
     monkeypatch.setattr(pipeline_main, "fetch_scout", fake_fetch)
     assert main([], root=root) == 0
+    assert read(root / "site" / "data", "latest.json")["source"] == "scout"
     assert calls == [("https://example.invalid/scout.api",
                       "FollowUpPriorityBoard/0.1 (+https://github.com/x/y; test@example.invalid)")]
 
