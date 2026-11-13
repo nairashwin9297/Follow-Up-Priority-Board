@@ -19,6 +19,20 @@ export function formatSmart(value) {
   return Number(value).toFixed(size >= 100 ? 0 : size >= 10 ? 1 : 2);
 }
 
+// Pixel positions for a sparkline. Points are evenly spaced by snapshot number (snapshots
+// are not evenly spaced in time) and scaled to the series' own range. A log scale is used
+// when every value is positive, because uncertainty can change by orders of magnitude.
+export function sparklinePoints(values, width, height, pad = 2) {
+  const scaled = values.every((v) => v > 0) ? values.map(Math.log10) : values;
+  const lo = Math.min(...scaled);
+  const span = Math.max(...scaled) - lo;
+  const step = values.length > 1 ? (width - 2 * pad) / (values.length - 1) : 0;
+  return scaled.map((v, i) => [
+    pad + i * step,
+    span === 0 ? height / 2 : height - pad - ((v - lo) / span) * (height - 2 * pad),
+  ]);
+}
+
 // "2026-11-13T01:41:25Z" -> "2026-11-13 01:41 UTC"
 export function utcLabel(iso) {
   const ms = Date.parse(iso);

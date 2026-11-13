@@ -1,7 +1,7 @@
 {
   "contact": "nair.ashw@northeastern.edu",
   "expected_scout_version": "1.3",
-  "repo_url": "<REPO_URL>",
+  "repo_url": "https://github.com/nairashwin9297/Follow-Up-Priority-Board",
   "scout_url": "https://ssd-api.jpl.nasa.gov/scout.api",
   "user_agent_template": "FollowUpPriorityBoard/0.1 (+{repo_url}; {contact})"
 }

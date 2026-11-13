@@ -24,10 +24,16 @@
   </header>
 
   <main>
+    <!-- Filled by app.js once the data has loaded. -->
+    <div id="weights-host"></div>
+
     <div id="board-content">
       <!-- Without JavaScript this text stays; app.js replaces it. -->
       <p>This page needs JavaScript to load and rank the data.</p>
     </div>
   </main>
+
+  <!-- Screen readers hear changes here ("Ranking updated", "Sorted by ..."). -->
+  <div id="live" class="visually-hidden" role="status" aria-live="polite"></div>
 </body>
 </html>

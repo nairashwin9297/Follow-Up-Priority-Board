@@ -33,6 +33,15 @@ def raw(**values):
     return row
 
 
+# --- config ---------------------------------------------------------------------
+
+def test_scoring_config_names_every_factor_once_with_a_short_name():
+    # The browser shows sliders in factor_order and names bar segments with "short".
+    assert sorted(SCORING["factor_order"]) == sorted(FACTOR_NAMES) == sorted(SCORING["weights"])
+    for name in FACTOR_NAMES:
+        assert SCORING["factors"][name]["short"]
+
+
 # --- helpers ------------------------------------------------------------------
 
 def test_clamp01():

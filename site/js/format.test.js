@@ -3,7 +3,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  failedUpdateText, formatNumber, formatSmart, freshness, freshnessText, relativeTime, utcLabel,
+  failedUpdateText, formatNumber, formatSmart, freshness, freshnessText, relativeTime,
+  sparklinePoints, utcLabel,
 } from "./format.js";
 
 const GENERATED = "2026-11-13T00:00:00Z";
@@ -28,6 +29,26 @@ test("formatSmart keeps detail for small values and trims big ones", () => {
   assert.equal(formatSmart(99.94), "99.9");
   assert.equal(formatSmart(450.67), "451");
   assert.equal(formatSmart(4800), "4800");
+});
+
+test("sparklinePoints: ends at the padding, higher values sit higher (smaller y)", () => {
+  const pts = sparklinePoints([5, 10, 20], 100, 40, 2);
+  assert.equal(pts.length, 3);
+  assert.deepEqual([pts[0][0], pts[2][0]], [2, 98]);
+  assert.equal(pts[0][1], 38); // lowest value at the bottom edge (height - pad)
+  assert.equal(pts[2][1], 2); // highest value at the top edge
+  assert.ok(pts[1][1] < pts[0][1] && pts[1][1] > pts[2][1]);
+});
+
+test("sparklinePoints uses a log scale when all values are positive", () => {
+  const ys = sparklinePoints([1, 10, 100], 100, 42, 1).map(([, y]) => y);
+  assert.ok(Math.abs((ys[0] - ys[1]) - (ys[1] - ys[2])) < 1e-9); // equal steps per decade
+});
+
+test("sparklinePoints falls back to linear when a value is zero, and centers flat series", () => {
+  const ys = sparklinePoints([0, 5, 10], 100, 42, 1).map(([, y]) => y);
+  assert.ok(Math.abs((ys[0] - ys[1]) - (ys[1] - ys[2])) < 1e-9);
+  assert.deepEqual(sparklinePoints([7, 7, 7], 100, 40).map(([, y]) => y), [20, 20, 20]);
 });
 
 test("utcLabel formats to the minute in UTC", () => {

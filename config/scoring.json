@@ -1,5 +1,6 @@
 {
   "schema_version": 1,
+  "factor_order": ["urgency", "sparse", "pha", "observability", "closeness"],
   "weights": {
     "urgency": 0.30,
     "sparse": 0.20,
@@ -9,6 +10,7 @@
   },
   "factors": {
     "urgency": {
+      "short": "Urgency",
       "label": "Position uncertainty growing",
       "why": "position uncertainty growing fast",
       "uncP1_lo_arcmin": 1,
@@ -18,6 +20,7 @@
       "growth_full_decades": 1
     },
     "sparse": {
+      "short": "Sparse data",
       "label": "Few observations / short arc",
       "why": "few observations",
       "nObs_min": 3,
@@ -28,10 +31,12 @@
       "arc_weight": 0.5
     },
     "pha": {
+      "short": "PHA likelihood",
       "label": "PHA likelihood (Scout)",
       "why": "high PHA likelihood (Scout)"
     },
     "observability": {
+      "short": "Observability",
       "label": "Brightness & sky position (coarse, not site-specific)",
       "why": "bright and well placed in the sky",
       "vmag_bright": 18,
@@ -42,6 +47,7 @@
       "elong_weight": 0.4
     },
     "closeness": {
+      "short": "Closeness",
       "label": "Close approach (caDist, else MOID)",
       "why": "close approach distance",
       "ld_lo": 0.1,

@@ -17,6 +17,12 @@
   --banner-stale-text: #ffc2c2;
   --banner-demo-bg: #1f2d57;
   --banner-demo-text: #d4e4ff;
+  --bar-track: #243252;
+  --f-urgency: #6cb6ff;
+  --f-sparse: #f4a259;
+  --f-pha: #c58af9;
+  --f-observability: #4fd1a1;
+  --f-closeness: #f2d45c;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   color-scheme: dark;
 }
@@ -39,6 +45,12 @@
     --banner-stale-text: #7a1212;
     --banner-demo-bg: #dde8ff;
     --banner-demo-text: #10306b;
+    --bar-track: #dfe5f1;
+    --f-urgency: #1b66b3;
+    --f-sparse: #b45309;
+    --f-pha: #7e3fb5;
+    --f-observability: #0f766e;
+    --f-closeness: #8a6a00;
     color-scheme: light;
   }
 }
@@ -54,7 +66,7 @@ body {
   font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-header, main { max-width: 72rem; margin: 0 auto; }
+header, main { max-width: 80rem; margin: 0 auto; }
 h1 { margin: 0 0 0.25rem; font-size: 1.5rem; letter-spacing: 0.01em; }
 .honesty { margin: 0 0 1rem; color: var(--text-muted); }
 
@@ -119,24 +131,108 @@ button {
 
 table { width: 100%; border-collapse: collapse; }
 caption { padding: 0.5rem 0.75rem; text-align: left; color: var(--text-muted); }
-th, td { padding: 0.4rem 0.75rem; border-top: 1px solid var(--border); text-align: left; vertical-align: top; }
-thead th { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; white-space: normal; }
-tbody tr:nth-child(even) { background: var(--surface-alt); }
+th, td { padding: 0.4rem 0.5rem; border-top: 1px solid var(--border); text-align: left; vertical-align: top; }
+thead th { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+/* Numeric headers may wrap (the cells below them may not), or long titles stretch the table. */
+thead th.num { white-space: normal; }
+th.num, td.num { text-align: right; }
+/* One <tbody> per object (row + detail), so the stripe covers both. */
+tbody:nth-of-type(even) { background: var(--surface-alt); }
+tbody tr.row-main > * { vertical-align: middle; }
 
 /* Monospace + tabular digits keep columns of numbers aligned. */
-.num { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
-thead th:not(:nth-child(2)) { text-align: right; }
-th.object { font-family: var(--mono); font-weight: 600; white-space: nowrap; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rank { color: var(--text-muted); }
+.muted { color: var(--text-muted); }
+.why { min-width: 12rem; max-width: 18rem; font-size: 0.9rem; }
 
-.flag {
-  margin-left: 0.25rem;
+.sort-button, .row-toggle {
+  padding: 0.15rem 0.3rem;
+  margin: -0.15rem -0.3rem;
+  border: 1px solid transparent;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+}
+.sort-button:hover, .row-toggle:hover { border-color: var(--border); }
+.sort-indicator { display: inline-block; min-width: 1em; color: var(--accent); }
+.row-toggle { font-family: var(--mono); font-weight: 600; color: var(--text); white-space: nowrap; }
+.row-toggle::before { content: "▸ "; color: var(--accent); }
+.row-toggle[aria-expanded="true"]::before { content: "▾ "; }
+
+.flag, .badge {
   padding: 0.05rem 0.4rem;
   border: 1px solid var(--border);
   border-radius: 3px;
   font-family: system-ui, sans-serif;
   font-size: 0.75rem;
   color: var(--text-muted);
+  white-space: nowrap;
+}
+.flag { margin-left: 0.25rem; }
+.badges { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
+.badge { color: var(--text); background: var(--surface); }
+
+/* Weights panel */
+.panel { margin-bottom: 1rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); }
+.panel h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+.panel-note { margin: 0 0 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
+.weights-list { display: grid; gap: 0.25rem 1rem; margin-bottom: 0.75rem; }
+.weight-row { display: grid; grid-template-columns: 1rem minmax(0, 1fr); gap: 0 0.5rem; align-items: center; padding: 0.25rem 0; }
+.weight-row label { grid-column: 2; }
+.weight-row input[type="range"] { grid-column: 2; width: 100%; min-width: 0; accent-color: var(--accent); }
+.weight-value, .weight-share { grid-column: 2; font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
+.weight-value { display: inline; }
+@media (min-width: 48rem) {
+  .weight-row { grid-template-columns: 1rem 20rem minmax(8rem, 1fr) 3rem 9rem; }
+  .weight-row label, .weight-row input[type="range"], .weight-value, .weight-share { grid-column: auto; }
+}
+.swatch { width: 0.75rem; height: 0.75rem; border-radius: 2px; }
+
+/* Stacked contribution bars: segment colors come from the --f-* tokens. */
+.swatch.seg-urgency, rect.seg-urgency { background: var(--f-urgency); fill: var(--f-urgency); }
+.swatch.seg-sparse, rect.seg-sparse { background: var(--f-sparse); fill: var(--f-sparse); }
+.swatch.seg-pha, rect.seg-pha { background: var(--f-pha); fill: var(--f-pha); }
+.swatch.seg-observability, rect.seg-observability { background: var(--f-observability); fill: var(--f-observability); }
+.swatch.seg-closeness, rect.seg-closeness { background: var(--f-closeness); fill: var(--f-closeness); }
+.bar { display: block; }
+.bar-track { fill: var(--bar-track); }
+.bar rect:not(.bar-track) { stroke: var(--surface); stroke-width: 0.6; vector-effect: non-scaling-stroke; }
+
+/* Row detail. The inner box sticks to the left and is capped to the screen, so on a phone
+   it stays readable while the table behind it scrolls sideways. */
+.row-detail > td { padding: 0; background: var(--surface-alt); }
+.detail {
+  position: sticky;
+  left: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 1rem;
+  width: min(72rem, calc(100vw - 3.5rem));
+  padding: 0.75rem 1rem;
+}
+.detail h3 { margin: 0 0 0.25rem; font-size: 0.95rem; }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 0.15rem 0.75rem; margin: 0; font-size: 0.875rem; }
+.kv dt { color: var(--text-muted); }
+.kv dd { margin: 0; font-family: var(--mono); overflow-wrap: anywhere; }
+.kv dd .muted { font-family: system-ui, sans-serif; }
+/* Score breakdown: factor names are long, so each value goes under its name. */
+.kv.score { grid-template-columns: minmax(0, 1fr); gap: 0; }
+.kv.score dd { margin-bottom: 0.4rem; }
+.detail a { color: var(--accent); }
+.sparkline-figure { margin: 0.5rem 0 0; }
+.sparkline-figure figcaption { font-size: 0.8rem; max-width: 22rem; }
+.sparkline polyline { stroke: var(--accent); stroke-width: 2; }
+.sparkline circle { fill: var(--accent); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 @media (prefers-reduced-motion: reduce) {

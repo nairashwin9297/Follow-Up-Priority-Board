@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-import { rankObjects, scoreObject, whyRankedHere } from "./score.js";
+import { effectiveShares, rankObjects, scoreObject, sortRows, whyRankedHere } from "./score.js";
 
 const SCORING = JSON.parse(readFileSync(new URL("../../config/scoring.json", import.meta.url)));
 const W = SCORING.weights; // urgency .30, sparse .20, pha .20, observability .15, closeness .15
@@ -13,9 +13,9 @@ const W = SCORING.weights; // urgency .30, sparse .20, pha .20, observability .1
 const near = (actual, expected) =>
   assert.ok(Math.abs(actual - expected) < 1e-9, `expected ${expected}, got ${actual}`);
 
-function obj(name, factors, gate = 1) {
+function obj(name, factors, gate = 1, raw = {}) {
   const all = { urgency: null, sparse: null, pha: null, observability: null, closeness: null };
-  return { objectName: name, gate, factors: { ...all, ...factors } };
+  return { objectName: name, gate, factors: { ...all, ...factors }, raw };
 }
 const ONES = { urgency: 1, sparse: 1, pha: 1, observability: 1, closeness: 1 };
 
@@ -120,6 +120,68 @@ test("rankObjects does not modify its input", () => {
   assert.deepEqual(input.map((o) => o.objectName), ["B", "A"]);
 });
 
+// --- effective weight shares ----------------------------------------------------
+
+test("effectiveShares add up to 1 and ignore overall scale", () => {
+  const shares = effectiveShares(W);
+  near(shares.urgency, 0.3);
+  near(Object.values(shares).reduce((a, b) => a + b, 0), 1);
+  near(effectiveShares({ ...W, urgency: 0.6, sparse: 0.4, pha: 0.4, observability: 0.3, closeness: 0.3 }).urgency, 0.3);
+});
+
+test("effectiveShares are all null when every weight is zero, and bad weights count as zero", () => {
+  const zero = effectiveShares({ urgency: 0, sparse: 0, pha: -1, observability: NaN, closeness: 0 });
+  assert.deepEqual(Object.values(zero), [null, null, null, null, null]);
+  assert.equal(effectiveShares({ urgency: 1, sparse: -3 }).sparse, 0);
+});
+
+// --- sorting --------------------------------------------------------------------
+
+const ranked = () =>
+  rankObjects(
+    [
+      obj("B", { pha: 0.2 }, 1, { nObs: 5, arc: 1, uncP1: 10, neoScore: 90, Vmag: 20 }),
+      obj("A", { pha: 0.9 }, 1, { nObs: 12, arc: null, uncP1: 300, neoScore: 40, Vmag: 22 }),
+      obj("C", { pha: 0.5 }, 1, { nObs: null, arc: 8, uncP1: 40, neoScore: 70, Vmag: null }),
+    ],
+    W,
+  );
+const names = (rows) => rows.map((r) => r.obj.objectName);
+
+test("sortRows by priority rank, both directions", () => {
+  assert.deepEqual(names(sortRows(ranked(), "rank", "asc")), ["A", "C", "B"]);
+  assert.deepEqual(names(sortRows(ranked(), "rank", "desc")), ["B", "C", "A"]);
+  assert.deepEqual(names(sortRows(ranked(), "priority", "desc")), ["A", "C", "B"]);
+});
+
+test("sortRows by name and by raw numeric columns", () => {
+  assert.deepEqual(names(sortRows(ranked(), "object", "asc")), ["A", "B", "C"]);
+  assert.deepEqual(names(sortRows(ranked(), "object", "desc")), ["C", "B", "A"]);
+  assert.deepEqual(names(sortRows(ranked(), "uncP1", "desc")), ["A", "C", "B"]);
+  assert.deepEqual(names(sortRows(ranked(), "neoScore", "asc")), ["A", "C", "B"]);
+});
+
+test("sortRows keeps empty values last in both directions", () => {
+  assert.deepEqual(names(sortRows(ranked(), "nObs", "desc")), ["A", "B", "C"]);
+  assert.deepEqual(names(sortRows(ranked(), "nObs", "asc")), ["B", "A", "C"]);
+  assert.deepEqual(names(sortRows(ranked(), "arc", "asc")), ["B", "C", "A"]);
+  assert.deepEqual(names(sortRows(ranked(), "Vmag", "desc")), ["A", "B", "C"]);
+});
+
+test("sortRows never renumbers ranks, breaks ties by rank, and leaves its input alone", () => {
+  const rows = ranked();
+  const byName = sortRows(rows, "object", "desc");
+  // Priority order is A, C, B, so C, B, A carry ranks 2, 3, 1: sorting never renumbers.
+  assert.deepEqual(byName.map((r) => r.rank), [2, 3, 1]);
+  const tied = rankObjects([obj("X", { pha: 1 }, 1, { nObs: 4 }), obj("Y", { pha: 0.5 }, 1, { nObs: 4 })], W);
+  assert.deepEqual(names(sortRows(tied, "nObs", "desc")), ["X", "Y"]);
+  assert.deepEqual(names(rows), ["A", "C", "B"]);
+});
+
+test("sortRows rejects an unknown column", () => {
+  assert.throws(() => sortRows(ranked(), "bogus", "asc"), /Unknown sort key/);
+});
+
 // --- "why ranked here" ----------------------------------------------------------
 
 test("why names the two largest contributions, largest first", () => {
@@ -143,6 +205,15 @@ test("why adds the gate note below 50 but not at 50", () => {
   assert.ok(!edge.includes("unlikely"), edge);
 });
 
+test("why tells slider-zeroed weights apart from missing data", () => {
+  const onlyUrgency = { urgency: 0.8 };
+  const zeroed = { ...W, urgency: 0, sparse: 0, pha: 0, observability: 0, closeness: 0 };
+  assert.equal(whyRankedHere(scoreObject(obj("A", onlyUrgency), zeroed), SCORING),
+    "No priority score: every weight for its available factors is zero.");
+  assert.equal(whyRankedHere(scoreObject(obj("A", onlyUrgency, null), W), SCORING),
+    "No priority score: missing data.");
+});
+
 test("why explains a missing priority and an all-zero one", () => {
   assert.equal(whyRankedHere(scoreObject(obj("A", {}), W), SCORING), "No priority score: missing data.");
   const zero = whyRankedHere(scoreObject(obj("A", ONES, 0), W), SCORING);
@@ -151,9 +222,11 @@ test("why explains a missing priority and an all-zero one", () => {
 
 // --- the JS side and config/scoring.json must agree -------------------------------
 
-test("every weight has a label and a why phrase, and the weights sum to 1", () => {
+test("every weight has a label, short name and why phrase, is in factor_order, and the weights sum to 1", () => {
+  assert.deepEqual([...SCORING.factor_order].sort(), Object.keys(W).sort());
   for (const name of Object.keys(W)) {
     assert.ok(SCORING.factors[name].label, `${name} has no label`);
+    assert.ok(SCORING.factors[name].short, `${name} has no short name`);
     assert.ok(SCORING.factors[name].why, `${name} has no why phrase`);
   }
   near(Object.values(W).reduce((a, b) => a + b, 0), 1);

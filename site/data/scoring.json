@@ -21,12 +21,20 @@
       "lastRun_older_than_h": 24
     }
   },
+  "factor_order": [
+    "urgency",
+    "sparse",
+    "pha",
+    "observability",
+    "closeness"
+  ],
   "factors": {
     "closeness": {
       "au_to_ld": 389.17,
       "label": "Close approach (caDist, else MOID)",
       "ld_hi": 100,
       "ld_lo": 0.1,
+      "short": "Closeness",
       "why": "close approach distance"
     },
     "observability": {
@@ -34,6 +42,7 @@
       "elong_min_deg": 45,
       "elong_weight": 0.4,
       "label": "Brightness & sky position (coarse, not site-specific)",
+      "short": "Observability",
       "vmag_bright": 18,
       "vmag_faint": 24,
       "vmag_weight": 0.6,
@@ -41,6 +50,7 @@
     },
     "pha": {
       "label": "PHA likelihood (Scout)",
+      "short": "PHA likelihood",
       "why": "high PHA likelihood (Scout)"
     },
     "sparse": {
@@ -51,6 +61,7 @@
       "nObs_max": 20,
       "nObs_min": 3,
       "nObs_weight": 0.5,
+      "short": "Sparse data",
       "why": "few observations"
     },
     "urgency": {
@@ -58,6 +69,7 @@
       "growth_weight": 0.3,
       "label": "Position uncertainty growing",
       "level_weight": 0.7,
+      "short": "Urgency",
       "uncP1_hi_arcmin": 600,
       "uncP1_lo_arcmin": 1,
       "why": "position uncertainty growing fast"

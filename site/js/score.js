@@ -48,10 +48,52 @@ export function rankObjects(objects, weights) {
   return scored.map((row, i) => ({ ...row, rank: i + 1 }));
 }
 
+// What each slider is worth after normalizing: shares add up to 1, or are all null when
+// every weight is zero (nothing to normalize against).
+export function effectiveShares(weights) {
+  const names = Object.keys(weights);
+  const total = names.reduce((sum, name) => sum + cleanWeight(weights[name]), 0);
+  return Object.fromEntries(names.map((name) => [name, total === 0 ? null : cleanWeight(weights[name]) / total]));
+}
+
+const SORT_VALUE = {
+  rank: (row) => row.rank,
+  object: (row) => row.obj.objectName,
+  priority: (row) => row.priority,
+  nObs: (row) => row.obj.raw.nObs,
+  arc: (row) => row.obj.raw.arc,
+  uncP1: (row) => row.obj.raw.uncP1,
+  neoScore: (row) => row.obj.raw.neoScore,
+  Vmag: (row) => row.obj.raw.Vmag,
+};
+
+// Reorder ranked rows for display. `rank` always stays the priority rank, so sorting
+// by another column never renumbers anything. Empty values go last in either direction.
+export function sortRows(rows, key, dir) {
+  const value = SORT_VALUE[key];
+  if (!value) throw new Error(`Unknown sort key: ${key}`);
+  const sign = dir === "desc" ? -1 : 1;
+  return [...rows].sort((a, b) => {
+    const x = value(a);
+    const y = value(b);
+    if (x == null && y == null) return a.rank - b.rank;
+    if (x == null) return 1;
+    if (y == null) return -1;
+    const order = typeof x === "string" ? x.localeCompare(y) : x - y;
+    return sign * order || a.rank - b.rank;
+  });
+}
+
 // One plain sentence naming the two biggest contributors, plus a note when the gate
 // (Scout's NEO score) pulled the priority down a lot. `scoring` is data/scoring.json.
 export function whyRankedHere(scored, scoring) {
-  if (scored.priority === null) return "No priority score: missing data.";
+  if (scored.priority === null) {
+    // Factors exist but the sliders zeroed them out: that is not "missing data".
+    if (scored.gate != null && scored.used.length > 0) {
+      return "No priority score: every weight for its available factors is zero.";
+    }
+    return "No priority score: missing data.";
+  }
   const top = Object.entries(scored.contributions)
     .filter(([, value]) => value > 0)
     // Equal contributions fall back to name order so the sentence is stable.
