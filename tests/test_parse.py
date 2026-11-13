@@ -161,7 +161,7 @@ def test_bad_number_becomes_null_and_row_is_kept():
     result = parse_payload(payload_with(rows))
     assert len(result["objects"]) == 4
     assert result["objects"][0]["Vmag"] is None
-    assert result["stats"] == {"rows": 4, "unparseable_rows": 1, "failed_values": 1}
+    assert result["stats"] == {"rows": 4, "unparseable_rows": 1, "failed_values": 1, "unknown_fields": []}
 
 
 def test_exactly_half_unparseable_is_accepted():
@@ -208,6 +208,40 @@ def test_unknown_fields_are_dropped():
     rows = real_rows(1)
     rows[0]["somethingNew"] = "1"
     assert "somethingNew" not in parse_payload(payload_with(rows))["objects"][0]
+
+
+def unknown_field_warnings(caplog):
+    return [r for r in caplog.records if "doesn't know" in r.getMessage()]
+
+
+def test_unknown_field_warns_once_per_run_and_names_every_new_field(caplog):
+    rows = real_rows(4)
+    for row in rows:                       # the same new field on every row ...
+        row["somethingNew"] = "1"
+    rows[2]["alsoNew"] = "x"               # ... and a second one on a single row
+    with caplog.at_level(logging.WARNING):
+        result = parse_payload(payload_with(rows))
+    warnings = unknown_field_warnings(caplog)
+    assert len(warnings) == 1              # one line per run, not one per row
+    assert "alsoNew, somethingNew" in warnings[0].getMessage()
+    assert result["stats"]["unknown_fields"] == ["alsoNew", "somethingNew"]
+    assert len(result["objects"]) == 4     # still parsed; the warning is only a heads-up
+
+
+def test_unknown_field_on_a_dropped_row_is_still_reported(caplog):
+    rows = real_rows(3)
+    del rows[0]["objectName"]
+    rows[0]["somethingNew"] = "1"
+    with caplog.at_level(logging.WARNING):
+        parse_payload(payload_with(rows))
+    assert len(unknown_field_warnings(caplog)) == 1
+
+
+def test_real_fixture_has_no_unknown_fields(caplog):
+    with caplog.at_level(logging.WARNING):
+        result = parse_payload(SAMPLE)
+    assert unknown_field_warnings(caplog) == []
+    assert result["stats"]["unknown_fields"] == []
 
 
 def test_version_mismatch_warns_but_parses(caplog):

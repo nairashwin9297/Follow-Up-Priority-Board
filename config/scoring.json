@@ -63,7 +63,11 @@
     "orbit_uncertain": { "label": "Orbit uncertain", "uncP1_gt_arcmin": 60 },
     "few_observations": { "label": "Few observations", "nObs_lt": 6, "arc_lt_h": 2 },
     "close_approach": { "label": "Close approach", "caDist_lt_ld": 5 },
-    "stale_scout_run": { "label": "Stale Scout run", "lastRun_older_than_h": 24 },
+    "stale_scout_run": {
+      "label": "Scout run 24 h+ ago",
+      "tooltip": "Scout hasn't recomputed this object in over a day. This may mean no new observations have been reported.",
+      "lastRun_older_than_h": 24
+    },
     "new": { "label": "New" }
   },
   "missing_label": "missing data"

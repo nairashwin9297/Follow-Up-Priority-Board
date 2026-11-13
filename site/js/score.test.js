@@ -4,7 +4,9 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
-import { effectiveShares, rankObjects, scoreObject, sortRows, whyRankedHere } from "./score.js";
+import {
+  effectiveShares, priorityHistogram, rankObjects, scoreObject, sortRows, whyRankedHere,
+} from "./score.js";
 
 const SCORING = JSON.parse(readFileSync(new URL("../../config/scoring.json", import.meta.url)));
 const W = SCORING.weights; // urgency .30, sparse .20, pha .20, observability .15, closeness .15
@@ -135,6 +137,42 @@ test("effectiveShares are all null when every weight is zero, and bad weights co
   assert.equal(effectiveShares({ urgency: 1, sparse: -3 }).sparse, 0);
 });
 
+// --- histogram ------------------------------------------------------------------
+
+const rowsOf = (...priorities) => priorities.map((priority) => ({ priority }));
+const counts = (h) => h.bins.map((b) => b.count);
+
+test("priorityHistogram bins are [lo, hi): 10 goes up, 9.99 stays, 100 lands in the last bin", () => {
+  const h = priorityHistogram(rowsOf(0, 9.99, 10, 55, 99.9, 100));
+  assert.deepEqual(counts(h), [2, 1, 0, 0, 0, 1, 0, 0, 0, 2]);
+  assert.deepEqual(h.bins[0], { lo: 0, hi: 10, count: 2 });
+  assert.deepEqual(h.bins[9], { lo: 90, hi: 100, count: 2 });
+});
+
+test("priorityHistogram keeps unscored objects out of the bins and out of the stats", () => {
+  const h = priorityHistogram(rowsOf(20, null, 40, null, null));
+  assert.equal(h.total, 5);
+  assert.equal(h.scored, 2);
+  assert.equal(h.unscored, 3);
+  assert.equal(counts(h).reduce((a, b) => a + b, 0), h.scored);
+  assert.equal(h.max, 40);
+  assert.equal(h.median, 30);
+});
+
+test("priorityHistogram median for odd and even counts, and for nothing at all", () => {
+  assert.equal(priorityHistogram(rowsOf(5, 90, 20)).median, 20);
+  assert.equal(priorityHistogram(rowsOf(10, 20, 30, 41)).median, 25);
+  const none = priorityHistogram([]);
+  assert.deepEqual([none.total, none.scored, none.max, none.median], [0, 0, null, null]);
+  assert.equal(priorityHistogram(rowsOf(null)).median, null);
+});
+
+test("priorityHistogram supports other bin sizes", () => {
+  const h = priorityHistogram(rowsOf(4, 5, 99), 5);
+  assert.equal(h.bins.length, 20);
+  assert.deepEqual([h.bins[0].count, h.bins[1].count, h.bins[19].count], [1, 1, 1]);
+});
+
 // --- sorting --------------------------------------------------------------------
 
 const ranked = () =>
@@ -221,6 +259,15 @@ test("why explains a missing priority and an all-zero one", () => {
 });
 
 // --- the JS side and config/scoring.json must agree -------------------------------
+
+test("the browser's badge config: every badge has a label, and the old-run tooltip stays hedged", () => {
+  for (const [id, badge] of Object.entries(SCORING.badges)) assert.ok(badge.label, `${id} has no label`);
+  const old = SCORING.badges.stale_scout_run;
+  assert.equal(old.label, "Scout run 24 h+ ago");
+  assert.ok(old.label.includes(`${old.lastRun_older_than_h} h`), "label must quote the threshold");
+  assert.match(old.tooltip, /\bmay\b/); // a guess about why, never stated as fact
+  assert.doesNotMatch(old.tooltip, /because/i);
+});
 
 test("every weight has a label, short name and why phrase, is in factor_order, and the weights sum to 1", () => {
   assert.deepEqual([...SCORING.factor_order].sort(), Object.keys(W).sort());

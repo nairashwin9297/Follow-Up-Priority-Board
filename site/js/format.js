@@ -19,6 +19,37 @@ export function formatSmart(value) {
   return Number(value).toFixed(size >= 100 ? 0 : size >= 10 ? 1 : 2);
 }
 
+// "10 to under 20", or "90 to 100" for the last bin, which includes 100 itself.
+export function binLabel(bin, isLast) {
+  return isLast ? `${bin.lo} to ${bin.hi}` : `${bin.lo} to under ${bin.hi}`;
+}
+
+// Clean tick values for a count axis: 0 up to a round number at or above `max`, in at most 4 steps.
+export function niceTicks(max) {
+  if (!(max > 0)) return [0, 1];
+  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200, 500, 1000].find((s) => Math.ceil(max / s) <= 4) ?? 1000;
+  const top = Math.ceil(max / step) * step;
+  const ticks = [];
+  for (let t = 0; t <= top; t += step) ticks.push(t);
+  return ticks;
+}
+
+const objects = (n) => `${n} object${n === 1 ? "" : "s"}`;
+
+// The chart's text summary: the same story in words, for anyone who can't see the bars.
+export function distributionSummary(hist) {
+  const { total, scored, unscored, max, median, bins } = hist;
+  if (total === 0) return "There are no objects to chart.";
+  if (scored === 0) return `None of the ${objects(total)} has a priority score.`;
+  const common = bins.reduce((best, bin) => (bin.count > best.count ? bin : best), bins[0]);
+  const parts = [
+    `Priority scores for ${objects(scored)}. Highest: ${max.toFixed(1)}. Median: ${median.toFixed(1)}.`,
+    `Most common range: ${binLabel(common, common === bins[bins.length - 1])} (${objects(common.count)}).`,
+  ];
+  if (unscored) parts.push(`${objects(unscored)} ${unscored === 1 ? "has" : "have"} no priority score and ${unscored === 1 ? "is" : "are"} not shown.`);
+  return parts.join(" ");
+}
+
 // Pixel positions for a sparkline. Points are evenly spaced by snapshot number (snapshots
 // are not evenly spaced in time) and scaled to the series' own range. A log scale is used
 // when every value is positive, because uncertainty can change by orders of magnitude.

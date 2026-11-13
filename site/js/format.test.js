@@ -3,8 +3,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 
 import {
-  failedUpdateText, formatNumber, formatSmart, freshness, freshnessText, relativeTime,
-  sparklinePoints, utcLabel,
+  binLabel, distributionSummary, failedUpdateText, formatNumber, formatSmart, freshness, freshnessText,
+  niceTicks, relativeTime, sparklinePoints, utcLabel,
 } from "./format.js";
 
 const GENERATED = "2026-11-13T00:00:00Z";
@@ -29,6 +29,54 @@ test("formatSmart keeps detail for small values and trims big ones", () => {
   assert.equal(formatSmart(99.94), "99.9");
   assert.equal(formatSmart(450.67), "451");
   assert.equal(formatSmart(4800), "4800");
+});
+
+test("binLabel says 'under' except for the last bin, which includes its upper edge", () => {
+  assert.equal(binLabel({ lo: 10, hi: 20 }, false), "10 to under 20");
+  assert.equal(binLabel({ lo: 90, hi: 100 }, true), "90 to 100");
+});
+
+test("niceTicks gives round numbers from 0 up to at or above the max, in at most 4 steps", () => {
+  assert.deepEqual(niceTicks(0), [0, 1]);
+  assert.deepEqual(niceTicks(-3), [0, 1]);
+  assert.deepEqual(niceTicks(1), [0, 1]);
+  assert.deepEqual(niceTicks(3), [0, 1, 2, 3]);
+  assert.deepEqual(niceTicks(5), [0, 2, 4, 6]);
+  assert.deepEqual(niceTicks(9), [0, 5, 10]);
+  assert.deepEqual(niceTicks(17), [0, 5, 10, 15, 20]);
+  assert.deepEqual(niceTicks(53), [0, 20, 40, 60]);
+  for (const max of [1, 2, 7, 13, 26, 49, 120, 999]) {
+    const ticks = niceTicks(max);
+    assert.ok(ticks.at(-1) >= max && ticks.length <= 5, `max ${max}: ${ticks}`);
+  }
+});
+
+const hist = (counts, extra = {}) => ({
+  bins: counts.map((count, i) => ({ lo: i * 10, hi: i * 10 + 10, count })),
+  total: counts.reduce((a, b) => a + b, 0), scored: counts.reduce((a, b) => a + b, 0), unscored: 0,
+  max: 65.64, median: 31.25, ...extra,
+});
+
+test("distributionSummary describes the shape in words", () => {
+  const text = distributionSummary(hist([0, 2, 9, 6, 3, 2, 1, 0, 0, 0]));
+  assert.equal(text, "Priority scores for 23 objects. Highest: 65.6. Median: 31.3. " +
+    "Most common range: 20 to under 30 (9 objects).");
+});
+
+test("distributionSummary handles singular nouns, ties, the last bin and unscored objects", () => {
+  assert.match(distributionSummary(hist([1, 0, 0, 0, 0, 0, 0, 0, 0, 0])), /^Priority scores for 1 object\./);
+  assert.match(distributionSummary(hist([3, 3, 0, 0, 0, 0, 0, 0, 0, 0])), /Most common range: 0 to under 10 \(3 objects\)/);
+  assert.match(distributionSummary(hist([0, 0, 0, 0, 0, 0, 0, 0, 0, 4])), /Most common range: 90 to 100 \(4 objects\)/);
+  const withGaps = distributionSummary(hist([1, 1, 0, 0, 0, 0, 0, 0, 0, 0], { total: 4, unscored: 2 }));
+  assert.match(withGaps, /2 objects have no priority score and are not shown\.$/);
+  assert.match(distributionSummary(hist([1, 0, 0, 0, 0, 0, 0, 0, 0, 0], { total: 2, unscored: 1 })), /1 object has no priority score and is not shown\.$/);
+});
+
+test("distributionSummary when there is nothing to show", () => {
+  assert.equal(distributionSummary(hist([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], { total: 0, scored: 0, max: null, median: null })),
+    "There are no objects to chart.");
+  assert.equal(distributionSummary(hist([0, 0, 0, 0, 0, 0, 0, 0, 0, 0], { total: 3, scored: 0, unscored: 3, max: null, median: null })),
+    "None of the 3 objects has a priority score.");
 });
 
 test("sparklinePoints: ends at the padding, higher values sit higher (smaller y)", () => {

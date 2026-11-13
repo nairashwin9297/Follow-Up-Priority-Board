@@ -26,6 +26,9 @@ SCORING_FIELDS = (
     "caDist", "moid", "Vmag", "elong", "lastRun",
 )
 
+# Every field name we read. Anything else in a row is new to us (see parse_payload).
+KNOWN_FIELDS = frozenset({"objectName", *NUMERIC_FIELDS, *TEXT_FIELDS, *TIME_FIELDS})
+
 MAX_UNPARSEABLE_FRACTION = 0.5
 TIME_FORMATS = ("%Y-%m-%d %H:%M", "%Y-%m-%d %H:%M:%S")
 ISO_FORMAT = "%Y-%m-%dT%H:%M:%SZ"  # what we write to JSON; always UTC
@@ -131,9 +134,11 @@ def parse_payload(payload, expected_version=None):
     if len(rows) != count:
         log.warning("count is %d but data has %d rows", count, len(rows))
 
-    objects, seen = [], set()
+    objects, seen, unknown = [], set(), set()
     unparseable = failed_values = 0
     for i, row in enumerate(rows):
+        if isinstance(row, dict):
+            unknown |= row.keys() - KNOWN_FIELDS
         name = row.get("objectName") if isinstance(row, dict) else None
         if not isinstance(name, str) or not name.strip():
             log.warning("row %d dropped: not an object or has no objectName", i)
@@ -155,6 +160,12 @@ def parse_payload(payload, expected_version=None):
     if rows and unparseable / len(rows) > MAX_UNPARSEABLE_FRACTION:
         raise ValidationError(f"{unparseable} of {len(rows)} rows are unparseable")
 
+    # The parser drops fields it doesn't know. Say so once per run (not once per row),
+    # because a new field can mean Scout changed something we should look at.
+    if unknown:
+        log.warning("Scout returned fields the parser doesn't know (ignored): %s",
+                    ", ".join(sorted(unknown)))
+
     return {
         "scout_version": version,
         "scout_count": count,
@@ -163,5 +174,6 @@ def parse_payload(payload, expected_version=None):
             "rows": len(rows),
             "unparseable_rows": unparseable,
             "failed_values": failed_values,
+            "unknown_fields": sorted(unknown),
         },
     }

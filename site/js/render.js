@@ -2,7 +2,7 @@
 //
 // Everything is built with createElement + textContent, never innerHTML, so an
 // object name (or any other value from the data files) can't be read as markup.
-import { formatNumber, formatSmart, sparklinePoints, utcLabel } from "./format.js";
+import { binLabel, formatNumber, formatSmart, niceTicks, sparklinePoints, utcLabel } from "./format.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 // Scout's own page for one object (its router uses #/object/<designation>).
@@ -204,8 +204,13 @@ function priorityCell(row) {
   return cell;
 }
 
-// Stacked bar: one segment per factor, widths in priority points (the full bar is 100).
+// Thin segmented bar: one segment per factor, the full width is 100 priority points.
+// Drawn in real pixels (1 unit = 1px) so the 2px gap between segments is exactly 2px.
 // The text alternative lists the numbers, so the colors are only a visual extra.
+const BAR_W = 120;
+const BAR_H = 8;
+const BAR_GAP = 2;
+
 function contributionBar(row, scoring) {
   const parts = scoring.factor_order
     .filter((name) => row.contributions[name] != null)
@@ -215,18 +220,24 @@ function contributionBar(row, scoring) {
     : `Contributions to priority: ${parts.join(", ")}.`;
 
   const svg = svgEl("svg", {
-    viewBox: "0 0 100 10", width: "120", height: "12", class: "bar", role: "img",
-    "aria-label": text, preserveAspectRatio: "none",
+    viewBox: `0 0 ${BAR_W} ${BAR_H}`, width: BAR_W, height: BAR_H, class: "bar", role: "img", "aria-label": text,
   });
-  svg.append(svgEl("title", {}), svgEl("rect", { x: 0, y: 0, width: 100, height: 10, class: "bar-track" }));
-  svg.firstChild.textContent = text;
+  const title = svgEl("title", {});
+  title.textContent = text;
+  // One shared clip path (defined in index.html) gives the whole bar fully rounded ends.
+  const group = svgEl("g", { "clip-path": "url(#bar-clip)" });
+  group.append(svgEl("rect", { x: 0, y: 0, width: BAR_W, height: BAR_H, class: "bar-track" }));
+  const shown = scoring.factor_order.filter((name) => row.contributions[name] > 0);
   let x = 0;
-  for (const name of scoring.factor_order) {
-    const width = row.contributions[name];
-    if (!width) continue;
-    svg.append(svgEl("rect", { x, y: 0, width, height: 10, class: `seg-${name}` }));
-    x += width;
-  }
+  shown.forEach((name, i) => {
+    const full = (row.contributions[name] / 100) * BAR_W;
+    // A 2px surface gap separates touching segments (not a border drawn around them).
+    const width = i === shown.length - 1 ? full : full - BAR_GAP;
+    // A sliver under a pixel can't be seen; its value is still in the text alternative.
+    if (width >= 1) group.append(svgEl("rect", { x, y: 0, width, height: BAR_H, class: `seg-${name}` }));
+    x += full;
+  });
+  svg.append(title, group);
   const cell = el("td");
   cell.append(svg);
   return cell;
@@ -239,7 +250,12 @@ function badgesCell(row, scoring) {
     return cell;
   }
   const list = el("ul", null, "badges");
-  for (const id of row.obj.badges) list.append(el("li", scoring.badges[id]?.label ?? id, "badge"));
+  for (const id of row.obj.badges) {
+    const badge = el("li", scoring.badges[id]?.label ?? id, "badge");
+    // The hover tooltip only helps mouse users, so the same text is repeated in the row detail.
+    if (scoring.badges[id]?.tooltip) badge.title = scoring.badges[id].tooltip;
+    list.append(badge);
+  }
   cell.append(list);
   return cell;
 }
@@ -299,7 +315,16 @@ function buildDetail(row, scoring) {
   links.append(externalLink("Open this object on Scout", SCOUT_OBJECT_URL + encodeURIComponent(obj.objectName)));
   timeline.append(links);
 
-  root.append(build, scout, timeline);
+  // Only badges that need explaining get a line here. Wording stays hedged on purpose.
+  const explained = obj.badges.filter((id) => scoring.badges[id]?.tooltip);
+  const notes = explained.length ? el("section", null, "detail-block") : null;
+  if (notes) {
+    const noteList = el("dl", null, "kv score prose");
+    notes.append(el("h3", "About this object's badges"), noteList);
+    for (const id of explained) addTerm(noteList, scoring.badges[id].label, scoring.badges[id].tooltip);
+  }
+
+  root.append(build, ...(notes ? [notes] : []), scout, timeline);
   return { node: root, slot };
 }
 
@@ -401,4 +426,166 @@ function rowGroup(row, ctx) {
 export function renderRows(table, rows, ctx) {
   table.querySelectorAll("tbody").forEach((body) => body.remove());
   table.append(...rows.map((row) => rowGroup(row, ctx)));
+}
+
+// --- Priority distribution chart --------------------------------------------------------
+// A column chart: one series (objects per priority range), so one color and no legend.
+// Each column is its own hover/focus target with a tooltip, and a table view holds the same
+// numbers, so nothing is only available by hovering.
+
+const CHART = { w: 440, h: 230, left: 44, right: 12, top: 22, bottom: 44, maxBar: 24, radius: 4 };
+
+// 4px rounded at the data end (top), square at the baseline.
+function columnPath(x, y, w, h) {
+  const r = Math.min(CHART.radius, h, w / 2);
+  return `M${x},${y + h}V${y + r}A${r},${r} 0 0 1 ${x + r},${y}H${x + w - r}A${r},${r} 0 0 1 ${x + w},${y + r}V${y + h}Z`;
+}
+
+function svgText(attrs, text) {
+  const node = svgEl("text", attrs);
+  node.textContent = text;
+  return node;
+}
+
+const countLabel = (n) => `${n} object${n === 1 ? "" : "s"}`;
+
+// Built once; update() redraws the bars and table, so the table's open/closed state survives.
+export function buildChart(container) {
+  const section = el("section", null, "panel chart-panel");
+  section.setAttribute("aria-labelledby", "chart-heading");
+  const heading = el("h2", "Priority distribution");
+  heading.id = "chart-heading";
+  const note = el("p", "How many objects fall in each priority range. It updates when you change the weights.", "panel-note");
+  const summary = el("p", null, "chart-summary");
+
+  // The canvas is the scroll content and the positioning box for the tooltip.
+  const svg = svgEl("svg", {
+    viewBox: `0 0 ${CHART.w} ${CHART.h}`, class: "chart", role: "group",
+    "aria-label": "Priority distribution. Use the arrow keys to move between bars.",
+  });
+  const tooltip = el("div", null, "chart-tooltip");
+  tooltip.hidden = true;
+  tooltip.setAttribute("aria-hidden", "true"); // each bar's own label is what a screen reader gets
+  const canvas = el("div", null, "chart-canvas");
+  canvas.append(svg, tooltip);
+  const figure = el("figure", null, "chart-figure");
+  figure.append(canvas);
+
+  const details = el("details", null, "chart-table");
+  details.append(el("summary", "Show as a table"));
+  const table = el("table");
+  const caption = el("caption", "Objects per priority range");
+  const headRow = el("tr");
+  for (const label of ["Priority range", "Objects"]) {
+    const th = el("th", label);
+    th.scope = "col";
+    headRow.append(th);
+  }
+  const thead = el("thead");
+  thead.append(headRow);
+  const tbody = el("tbody");
+  table.append(caption, thead, tbody);
+  details.append(table);
+
+  section.append(heading, note, summary, figure, details);
+  container.replaceChildren(section);
+
+  let groups = [];
+  let active = 0; // the one bar that is a tab stop; arrow keys move it
+
+  function hideTip() {
+    tooltip.hidden = true;
+    groups.forEach((g) => g.classList.remove("is-active"));
+  }
+
+  function showTip(i, bin, last, anchorX, anchorY) {
+    groups.forEach((g, j) => g.classList.toggle("is-active", j === i));
+    const value = el("strong", countLabel(bin.count));
+    tooltip.replaceChildren(value, el("span", `Priority ${binLabel(bin, last)}`));
+    tooltip.hidden = false;
+    // Convert chart units to screen pixels, then keep the tooltip inside the canvas.
+    const scale = svg.getBoundingClientRect().width / CHART.w;
+    const half = tooltip.offsetWidth / 2;
+    const left = Math.min(Math.max(anchorX * scale, half), canvas.clientWidth - half);
+    const top = anchorY * scale - tooltip.offsetHeight - 6;
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${Math.max(top, 0)}px`;
+  }
+
+  return {
+    update(hist, summaryText) {
+      summary.textContent = summaryText;
+      const { bins } = hist;
+      const maxCount = Math.max(...bins.map((b) => b.count));
+      const ticks = niceTicks(maxCount);
+      const yMax = ticks[ticks.length - 1];
+      const plotW = CHART.w - CHART.left - CHART.right;
+      const plotH = CHART.h - CHART.top - CHART.bottom;
+      const slot = plotW / bins.length;
+      const y = (v) => CHART.top + plotH - (v / yMax) * plotH;
+
+      svg.replaceChildren();
+      for (const t of ticks) { // hairline, solid, recessive; the 0 line is the baseline
+        svg.append(svgEl("line", { x1: CHART.left, x2: CHART.w - CHART.right, y1: y(t), y2: y(t), class: "chart-grid" }));
+        svg.append(svgText({ x: CHART.left - 6, y: y(t), class: "chart-tick", "text-anchor": "end", "dominant-baseline": "middle" }, String(t)));
+      }
+      bins.forEach((bin, i) => { // x labels sit on the bin edges
+        svg.append(svgText({ x: CHART.left + i * slot, y: CHART.top + plotH + 16, class: "chart-tick", "text-anchor": "middle" }, String(bin.lo)));
+      });
+      svg.append(svgText({ x: CHART.left + plotW, y: CHART.top + plotH + 16, class: "chart-tick", "text-anchor": "middle" }, String(bins[bins.length - 1].hi)));
+      svg.append(svgText({ x: CHART.left + plotW / 2, y: CHART.h - 8, class: "chart-axis-title", "text-anchor": "middle" }, "Priority (0 to 100)"));
+      svg.append(svgText({ x: 12, y: CHART.top + plotH / 2, class: "chart-axis-title", "text-anchor": "middle", transform: `rotate(-90 12 ${CHART.top + plotH / 2})` }, "Objects"));
+
+      const peak = maxCount > 0 ? bins.findIndex((b) => b.count === maxCount) : -1;
+      groups = bins.map((bin, i) => {
+        const last = i === bins.length - 1;
+        const g = svgEl("g", {
+          class: "chart-bin", role: "img", tabindex: i === active ? "0" : "-1",
+          "aria-label": `${binLabel(bin, last)}: ${countLabel(bin.count)}`,
+        });
+        const barW = Math.min(CHART.maxBar, slot - 2);
+        const barX = CHART.left + i * slot + (slot - barW) / 2;
+        const barH = (bin.count / yMax) * plotH;
+        const barY = y(bin.count);
+        // The hit area is the whole slot, much bigger than the (thin) bar itself.
+        g.append(svgEl("rect", { x: CHART.left + i * slot, y: CHART.top, width: slot, height: plotH, class: "chart-hit" }));
+        if (bin.count > 0) g.append(svgEl("path", { d: columnPath(barX, barY, barW, barH), class: "chart-bar" }));
+        // Only the tallest column gets a printed value; the axis and tooltip carry the rest.
+        if (i === peak) g.append(svgText({ x: barX + barW / 2, y: barY - 5, class: "chart-value", "text-anchor": "middle" }, String(bin.count)));
+
+        const show = () => showTip(i, bin, last, barX + barW / 2, barY);
+        g.addEventListener("pointerenter", show);
+        g.addEventListener("pointerleave", hideTip);
+        g.addEventListener("focus", () => {
+          active = i;
+          groups.forEach((other, j) => other.setAttribute("tabindex", j === i ? "0" : "-1"));
+          show();
+        });
+        g.addEventListener("blur", hideTip);
+        g.addEventListener("keydown", (event) => {
+          const target = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: bins.length - 1 }[event.key];
+          if (event.key === "Escape") hideTip(); // lets a keyboard user dismiss the tooltip
+          if (target === undefined) return;
+          event.preventDefault();
+          groups[Math.min(Math.max(target, 0), bins.length - 1)].focus();
+        });
+        return g;
+      });
+      svg.append(...groups);
+      hideTip();
+
+      tbody.replaceChildren(...bins.map((bin, i) => {
+        const tr = el("tr");
+        tr.append(el("th", binLabel(bin, i === bins.length - 1)), el("td", String(bin.count), "num"));
+        tr.firstChild.scope = "row";
+        return tr;
+      }));
+      if (hist.unscored) {
+        const tr = el("tr");
+        tr.append(el("th", "No priority score"), el("td", String(hist.unscored), "num"));
+        tr.firstChild.scope = "row";
+        tbody.append(tr);
+      }
+    },
+  };
 }

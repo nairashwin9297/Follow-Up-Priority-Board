@@ -48,6 +48,31 @@ export function rankObjects(objects, weights) {
   return scored.map((row, i) => ({ ...row, rank: i + 1 }));
 }
 
+// Count objects per priority range (default: ten bins of 10 points) for the chart.
+// Objects with no priority are counted separately, never put in a bin.
+export function priorityHistogram(rows, binSize = 10) {
+  const binCount = Math.ceil(100 / binSize);
+  const bins = Array.from({ length: binCount }, (_, i) => ({ lo: i * binSize, hi: (i + 1) * binSize, count: 0 }));
+  const values = [];
+  for (const row of rows) {
+    if (row.priority === null) continue;
+    values.push(row.priority);
+    // The last bin also takes 100 itself, so a perfect score doesn't fall off the end.
+    bins[Math.min(binCount - 1, Math.floor(row.priority / binSize))].count += 1;
+  }
+  values.sort((a, b) => a - b);
+  const mid = values.length >> 1;
+  const median = values.length === 0 ? null : values.length % 2 ? values[mid] : (values[mid - 1] + values[mid]) / 2;
+  return {
+    bins,
+    total: rows.length,
+    scored: values.length,
+    unscored: rows.length - values.length,
+    max: values.length ? values[values.length - 1] : null,
+    median,
+  };
+}
+
 // What each slider is worth after normalizing: shares add up to 1, or are all null when
 // every weight is zero (nothing to normalize against).
 export function effectiveShares(weights) {

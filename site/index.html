@@ -10,6 +10,12 @@
 </head>
 <body>
   <a class="skip-link" href="#board-content">Skip to the table</a>
+  <a class="skip-link" href="#chart-host">Skip past the table to the chart and notes</a>
+
+  <!-- Shared clip path: gives every contribution bar fully rounded ends. Kept at 1px (not 0) so no browser skips it. -->
+  <svg width="1" height="1" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs><clipPath id="bar-clip"><rect width="120" height="8" rx="4"/></clipPath></defs>
+  </svg>
 
   <header>
     <h1>Follow-Up Priority Board</h1>
@@ -24,14 +30,48 @@
   </header>
 
   <main>
+    <details class="panel what">
+      <summary>What am I looking at?</summary>
+      <p>
+        The Minor Planet Center keeps a public list of newly spotted objects that might be near-Earth
+        asteroids but are not yet confirmed. NASA/JPL's Scout system fits a rough orbit to each one as new
+        observations come in. Those orbits are very uncertain while an object has only a few observations,
+        and its position gets harder to predict with every passing day. That is why follow-up observations
+        matter: if nobody measures an object again soon, it can be lost before anyone learns what it is.
+      </p>
+      <p>
+        This page ranks Scout's current list by an illustrative priority score: how much each object seems
+        to need another look before its position becomes too uncertain to find. The score blends five
+        factors, and the sliders let you change their weights. It is a demonstration of transparent triage
+        logic. It is not an official method, and it says nothing definite about any object.
+      </p>
+    </details>
+
     <!-- Filled by app.js once the data has loaded. -->
     <div id="weights-host"></div>
 
+    <h2 class="visually-hidden">Ranked objects</h2>
     <div id="board-content">
       <!-- Without JavaScript this text stays; app.js replaces it. -->
       <p>This page needs JavaScript to load and rank the data.</p>
     </div>
+
+    <div id="chart-host"></div>
   </main>
+
+  <footer>
+    <h2 class="visually-hidden">About this page</h2>
+    <ul class="notes">
+      <li>
+        Data: <a href="https://cneos.jpl.nasa.gov/scout/" target="_blank" rel="noopener noreferrer">NASA/JPL CNEOS Scout<span class="visually-hidden"> (opens in a new tab)</span></a>.
+        <span id="fetched-note">Fetch time unknown.</span>
+      </li>
+      <li>All objects are unconfirmed candidates; some may not be real.</li>
+      <li>Priority is an illustrative heuristic I designed, not an official method.</li>
+      <li>Not affiliated with NASA, JPL, the Minor Planet Center, or the Smithsonian.</li>
+      <li>Snapshots every ~6 hours; objects listed only briefly between snapshots are missed.</li>
+    </ul>
+  </footer>
 
   <!-- Screen readers hear changes here ("Ranking updated", "Sorted by ..."). -->
   <div id="live" class="visually-hidden" role="status" aria-live="polite"></div>

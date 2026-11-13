@@ -17,8 +17,9 @@
       "uncP1_gt_arcmin": 60
     },
     "stale_scout_run": {
-      "label": "Stale Scout run",
-      "lastRun_older_than_h": 24
+      "label": "Scout run 24 h+ ago",
+      "lastRun_older_than_h": 24,
+      "tooltip": "Scout hasn't recomputed this object in over a day. This may mean no new observations have been reported."
     }
   },
   "factor_order": [

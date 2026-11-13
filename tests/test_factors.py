@@ -35,6 +35,16 @@ def raw(**values):
 
 # --- config ---------------------------------------------------------------------
 
+def test_old_run_badge_label_names_its_threshold_and_the_tooltip_stays_hedged():
+    cfg = SCORING["badges"]["stale_scout_run"]
+    # The label quotes the threshold, so changing one without the other fails here.
+    assert f'{cfg["lastRun_older_than_h"]} h' in cfg["label"]
+    assert cfg["label"] == "Scout run 24 h+ ago"
+    # We don't know why Scout hasn't re-run an object, so the text must not state a cause as fact.
+    assert "may" in cfg["tooltip"] and "no new observations have been reported" in cfg["tooltip"]
+    assert "because" not in cfg["tooltip"].lower()
+
+
 def test_scoring_config_names_every_factor_once_with_a_short_name():
     # The browser shows sliders in factor_order and names bar segments with "short".
     assert sorted(SCORING["factor_order"]) == sorted(FACTOR_NAMES) == sorted(SCORING["weights"])

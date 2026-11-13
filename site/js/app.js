@@ -1,14 +1,18 @@
 // Entry point: load our own JSON, rank it, hand the result to render.js.
 // The browser only ever reads files from this site, never the Scout API.
-import { failedUpdateText, freshnessText } from "./format.js";
-import { COLUMNS, buildTable, buildWeightsPanel, fillHistory, renderRows, showMessage, showNote } from "./render.js";
-import { effectiveShares, rankObjects, sortRows, whyRankedHere } from "./score.js";
+import { distributionSummary, failedUpdateText, freshnessText, utcLabel } from "./format.js";
+import {
+  COLUMNS, buildChart, buildTable, buildWeightsPanel, fillHistory, renderRows, showMessage, showNote,
+} from "./render.js";
+import { effectiveShares, priorityHistogram, rankObjects, sortRows, whyRankedHere } from "./score.js";
 
 const $ = (id) => document.getElementById(id);
 const demoBanner = $("demo-banner");
 const freshnessBanner = $("freshness");
 const failedNote = $("failed-update");
 const weightsHost = $("weights-host");
+const chartHost = $("chart-host");
+const fetchedNote = $("fetched-note");
 const board = $("board-content");
 const liveRegion = $("live");
 
@@ -65,9 +69,11 @@ async function showHistory(name, slot) {
 
 // Re-score, re-sort and redraw the rows. The header and sliders are updated, not rebuilt.
 function refresh() {
-  const { latest, scoring, weights, sort, expanded, panel, table } = view;
+  const { latest, scoring, weights, sort, expanded, panel, table, chart } = view;
   panel.update(weights, effectiveShares(weights));
   const ranked = rankObjects(latest.objects, weights);
+  const histogram = priorityHistogram(ranked);
+  chart.update(histogram, distributionSummary(histogram));
   table.setCaption(`Unconfirmed NEO candidates, ranked by illustrative follow-up priority (${ranked.length} objects)`);
   table.setSort(sort.key, sort.dir);
   renderRows(table.table, sortRows(ranked, sort.key, sort.dir), {
@@ -105,6 +111,8 @@ async function load() {
   historyRequest = null;
   for (const note of [demoBanner, freshnessBanner, failedNote]) showNote(note, null);
   weightsHost.replaceChildren();
+  chartHost.replaceChildren();
+  fetchedNote.textContent = "Fetch time unknown.";
   showMessage(board, { kind: "loading", title: "Loading…", text: "Reading the latest snapshot." });
 
   // status.json only adds a warning line, so a failure to load it is not fatal.
@@ -131,6 +139,7 @@ async function load() {
   }
 
   generatedAt = latest.generated_at;
+  fetchedNote.textContent = `Fetched ${utcLabel(generatedAt)}.`;
   updateFreshness();
   showNote(failedNote, failedUpdateText(await statusRequest), "failed");
   showNote(demoBanner, latest.source === "fixture" ? DEMO_TEXT : null, "demo");
@@ -152,6 +161,7 @@ async function load() {
     expanded: new Set(), // object names whose detail row is open; survives re-sorting
     panel: buildWeightsPanel(weightsHost, scoring, { onChange: onWeightChange, onReset }),
     table: buildTable(board, { onSort }),
+    chart: buildChart(chartHost),
   };
   refresh();
 }
