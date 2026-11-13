@@ -26,7 +26,9 @@
   --f-observability: #c98500;
   --f-closeness: #d55181;
   --chart-bar: #868c9a; /* neutral gray: one series needs no category color, and gray can't be mistaken for a factor's color */
+  --sky-dot: #aab3c7; /* neutral, like the chart: the map's size encoding needs no category color */
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
   color-scheme: dark;
 }
 
@@ -57,6 +59,7 @@
     --f-observability: #b87c01;
     --f-closeness: #cf658e;
     --chart-bar: #6b717e;
+    --sky-dot: #4a5163;
     color-scheme: light;
   }
 }
@@ -72,9 +75,9 @@ body {
   font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-header, main { max-width: 80rem; margin: 0 auto; }
+header, main { max-width: 87.5rem; margin: 0 auto; } /* about 1400px, so the table has room */
 h1 { margin: 0 0 0.25rem; font-size: 1.5rem; letter-spacing: 0.01em; }
-.honesty { margin: 0 0 1rem; color: var(--text-muted); }
+.honesty { margin: 0.25rem 0 0; color: var(--text-muted); }
 
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
@@ -137,10 +140,11 @@ button {
 
 table { width: 100%; border-collapse: collapse; }
 caption { padding: 0.5rem 0.75rem; text-align: left; color: var(--text-muted); }
-th, td { padding: 0.4rem 0.5rem; border-top: 1px solid var(--border); text-align: left; vertical-align: top; }
-thead th { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
-/* Numeric headers may wrap (the cells below them may not), or long titles stretch the table. */
-thead th.num { white-space: normal; }
+th, td { padding: 0.4rem 0.4rem; border-top: 1px solid var(--border); text-align: left; vertical-align: top; }
+thead th { font-family: var(--sans); color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+/* Numeric headers use the same font as the others (only the numbers below them are monospace),
+   and may wrap, or long titles stretch the table. */
+thead th.num { font-family: var(--sans); font-variant-numeric: normal; white-space: normal; }
 th.num, td.num { text-align: right; }
 /* One <tbody> per object (row + detail), so the stripe covers both. */
 tbody:nth-of-type(even) { background: var(--surface-alt); }
@@ -150,7 +154,7 @@ tbody tr.row-main > * { vertical-align: middle; }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .rank { color: var(--text-muted); }
 .muted { color: var(--text-muted); }
-.why { min-width: 12rem; max-width: 18rem; font-size: 0.9rem; }
+.why { min-width: 12rem; max-width: 22rem; font-size: 0.8rem; color: var(--text-muted); }
 
 .sort-button, .row-toggle {
   padding: 0.15rem 0.3rem;
@@ -177,22 +181,34 @@ tbody tr.row-main > * { vertical-align: middle; }
   white-space: nowrap;
 }
 .flag { margin-left: 0.25rem; }
+.badges-cell { min-width: 15rem; }
+@media (min-width: 90rem) { /* wide enough for three badges on one line; narrower screens wrap them instead */
+  .badges-cell { min-width: 22.5rem; }
+  .why { min-width: 10rem; }
+}
 .badges { display: flex; flex-wrap: wrap; gap: 0.25rem; margin: 0; padding: 0; list-style: none; }
 .badge { color: var(--text); background: var(--surface); }
 
 /* Weights panel */
 .panel { margin-bottom: 1rem; padding: 0.75rem 1rem; border: 1px solid var(--border); border-radius: 4px; background: var(--surface); }
 .panel h2 { margin: 0 0 0.25rem; font-size: 1.1rem; }
+.panel > summary { cursor: pointer; padding: 0.15rem 0; }
+.panel > summary h2 { display: inline; margin: 0; } /* heading inside the summary, on one line with the marker */
+.panel > summary + .panel-note { margin-top: 0.5rem; }
 .panel-note { margin: 0 0 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
-.weights-list { display: grid; gap: 0.25rem 1rem; margin-bottom: 0.75rem; }
+.weights-list { display: grid; gap: 0.25rem 1rem; margin-bottom: 0.75rem; max-width: 60rem; }
 .weight-row { display: grid; grid-template-columns: 1rem minmax(0, 1fr); gap: 0 0.5rem; align-items: center; padding: 0.25rem 0; }
 .weight-row label { grid-column: 2; }
 .weight-row input[type="range"] { grid-column: 2; width: 100%; min-width: 0; height: 1.5rem; accent-color: var(--accent); }
-.weight-value, .weight-share { grid-column: 2; font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
-.weight-value { display: inline; }
+.weight-value, .weight-share { grid-column: 2; grid-row: 3; font-family: var(--mono); font-size: 0.85rem; color: var(--text-muted); }
+/* On a phone the label, the slider, and then value + share on one line, so each slider takes less height. */
+.weight-row > .swatch, .weight-row > label { grid-row: 1; }
+.weight-row > input[type="range"] { grid-row: 2; }
+.weight-share { justify-self: end; }
 @media (min-width: 48rem) {
   .weight-row { grid-template-columns: 1rem 20rem minmax(8rem, 1fr) 3rem 9rem; }
-  .weight-row label, .weight-row input[type="range"], .weight-value, .weight-share { grid-column: auto; }
+  .weight-row > .swatch, .weight-row label, .weight-row input[type="range"], .weight-value, .weight-share { grid-column: auto; grid-row: auto; }
+  .weight-share { justify-self: start; }
 }
 .swatch { width: 0.75rem; height: 0.75rem; border-radius: 2px; }
 
@@ -249,9 +265,14 @@ tbody tr.row-main > * { vertical-align: middle; }
 .what { padding: 0.5rem 1rem; margin-bottom: 1rem; }
 .what summary { cursor: pointer; font-weight: 600; padding: 0.25rem 0; }
 .what p { max-width: 62ch; margin: 0.5rem 0; }
+@media (min-width: 60rem) {
+  .what-body { columns: 2; column-gap: 2.5rem; }
+  .what-body p { max-width: none; margin-top: 0; break-inside: avoid; }
+}
 
 /* Priority distribution chart: hairline solid grid, thin columns, text in text colors. */
-.chart-panel { margin-top: 1rem; }
+.viz-layout { display: grid; gap: 1rem; }
+.viz-side > :first-child { margin-top: 0; }
 .chart-summary { margin: 0 0 0.5rem; }
 .chart-figure { margin: 0; overflow-x: auto; }
 .chart-canvas { position: relative; min-width: 20rem; max-width: 40rem; }
@@ -283,10 +304,38 @@ svg.chart { display: block; width: 100%; height: auto; }
 .chart-table { margin-top: 0.5rem; }
 .chart-table summary { cursor: pointer; padding: 0.25rem 0; }
 .chart-table table { width: auto; min-width: 16rem; margin-top: 0.25rem; }
+@media (min-width: 64rem) {
+  .viz-layout { grid-template-columns: minmax(0, 40rem) minmax(16rem, 1fr); align-items: start; }
+  .viz-layout.sky-layout { grid-template-columns: minmax(0, 52rem) minmax(16rem, 1fr); }
+}
+
+/* Sky map: plain shapes on a subtle hairline grid. Dot size is the encoding. */
+.sky-figure { margin: 0; overflow-x: auto; }
+.sky-figure figcaption { margin-top: 0.25rem; font-size: 0.85rem; }
+.sky-canvas { position: relative; max-width: 52rem; }
+svg.sky { display: block; max-width: none; }
+.sky-bg { fill: var(--bg); }
+.sky-grid { stroke: var(--border); stroke-width: 1; }
+.sky-dot-fill { fill: var(--sky-dot); stroke: var(--bg); stroke-width: 1.5; } /* surface ring keeps overlapping dots apart */
+.sky-dot-empty { fill: none; stroke: var(--sky-dot); stroke-width: 1.5; }
+.sky-dot { outline: none; }
+.sky-ring { fill: none; stroke: transparent; stroke-width: 2; }
+.sky-dot.is-active .sky-ring { stroke: var(--text); }
+.sky-dot.is-selected .sky-ring { stroke: var(--accent); stroke-width: 3; }
+.sky-dot:focus-visible .sky-ring { stroke: var(--focus); stroke-width: 3; }
+.sky-legend { display: flex; align-items: center; gap: 0.75rem; margin: 0 0 0.5rem; color: var(--text-muted); font-size: 0.9rem; }
+.sky-legend svg { flex: none; }
+.sky-table-box { max-height: 20rem; overflow: auto; margin-top: 0.25rem; border: 1px solid var(--border); border-radius: 4px; }
+.sky-table-box table { width: 100%; }
+.link-button { margin: -0.1rem -0.3rem; padding: 0.1rem 0.3rem; border-color: transparent; background: none; color: var(--accent); font-family: var(--mono); font-weight: 600; }
+
+/* The row last picked on the sky map. */
+tbody { scroll-margin-top: 1rem; }
+tbody.is-selected tr.row-main > td:first-child { box-shadow: inset 4px 0 0 var(--accent); }
 
 /* Footer notes */
 footer {
-  max-width: 80rem;
+  max-width: 87.5rem;
   margin: 1.5rem auto 0;
   padding: 0.75rem 0 1rem;
   border-top: 1px solid var(--border);

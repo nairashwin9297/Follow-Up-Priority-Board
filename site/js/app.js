@@ -2,14 +2,16 @@
 // The browser only ever reads files from this site, never the Scout API.
 import { distributionSummary, failedUpdateText, freshnessText, utcLabel } from "./format.js";
 import {
-  COLUMNS, buildChart, buildTable, buildWeightsPanel, fillHistory, renderRows, showMessage, showNote,
+  COLUMNS, buildChart, buildSkyMap, buildTable, buildWeightsPanel, fillHistory, renderRows, showMessage, showNote,
 } from "./render.js";
 import { effectiveShares, priorityHistogram, rankObjects, sortRows, whyRankedHere } from "./score.js";
+import { skyPoints, skySummary } from "./sky.js";
 
 const $ = (id) => document.getElementById(id);
 const demoBanner = $("demo-banner");
 const freshnessBanner = $("freshness");
 const failedNote = $("failed-update");
+const skyHost = $("sky-host");
 const weightsHost = $("weights-host");
 const chartHost = $("chart-host");
 const fetchedNote = $("fetched-note");
@@ -69,19 +71,36 @@ async function showHistory(name, slot) {
 
 // Re-score, re-sort and redraw the rows. The header and sliders are updated, not rebuilt.
 function refresh() {
-  const { latest, scoring, weights, sort, expanded, panel, table, chart } = view;
+  const { latest, scoring, weights, sort, expanded, selected, panel, table, chart, sky } = view;
   panel.update(weights, effectiveShares(weights));
   const ranked = rankObjects(latest.objects, weights);
   const histogram = priorityHistogram(ranked);
   chart.update(histogram, distributionSummary(histogram));
+  const positions = skyPoints(ranked);
+  sky.update(positions, skySummary(positions), selected);
   table.setCaption(`Unconfirmed NEO candidates, ranked by illustrative follow-up priority (${ranked.length} objects)`);
   table.setSort(sort.key, sort.dir);
   renderRows(table.table, sortRows(ranked, sort.key, sort.dir), {
     scoring,
     expanded,
+    selected,
     why: (row) => whyRankedHere(row, scoring),
     onOpen: showHistory,
   });
+}
+
+// Picking an object on the sky map: open its table row, scroll to it, and move focus there so a
+// keyboard user continues from the row.
+function openRow(name) {
+  view.expanded.add(name);
+  view.selected = name;
+  refresh();
+  const toggle = view.table.table.querySelector(`.row-toggle[data-object="${CSS.escape(name)}"]`);
+  if (!toggle) return;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  toggle.focus({ preventScroll: true });
+  toggle.scrollIntoView({ block: "center", behavior: reduceMotion ? "auto" : "smooth" });
+  announce(`Opened ${name} in the table.`);
 }
 
 function onWeightChange(name, value) {
@@ -110,6 +129,7 @@ async function load() {
   view = null;
   historyRequest = null;
   for (const note of [demoBanner, freshnessBanner, failedNote]) showNote(note, null);
+  skyHost.replaceChildren();
   weightsHost.replaceChildren();
   chartHost.replaceChildren();
   fetchedNote.textContent = "Fetch time unknown.";
@@ -159,9 +179,11 @@ async function load() {
     weights: { ...scoring.weights },
     sort: { key: "rank", dir: "asc" },
     expanded: new Set(), // object names whose detail row is open; survives re-sorting
+    selected: null, // the object last picked on the sky map
     panel: buildWeightsPanel(weightsHost, scoring, { onChange: onWeightChange, onReset }),
     table: buildTable(board, { onSort }),
     chart: buildChart(chartHost),
+    sky: buildSkyMap(skyHost, { onSelect: openRow }),
   };
   refresh();
 }

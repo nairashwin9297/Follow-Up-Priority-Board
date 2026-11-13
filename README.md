@@ -6,7 +6,7 @@ A static web page that ranks the unconfirmed near-Earth object (NEO) candidates 
 
 **Live site:** `<LIVE_URL>` _(TODO: add the GitHub Pages link once it is published)_
 
-You can move five weight sliders and watch the ranking change, sort the table by any numeric column, open any row to see exactly how its score was built, and see how the priorities are distributed in a chart. There are no AI or LLM calls anywhere in the app.
+The page has a sky map of where the objects are (dot size shows priority), five weight sliders that re-rank everything live (the panel can be collapsed to bring the table higher, and it starts collapsed on phones, as does the explainer), a chart of how the priorities are distributed, and a sortable table where any row opens to show exactly how its score was built. Picking a dot on the map opens and scrolls to that object's row. There are no AI or LLM calls anywhere in the app.
 
 ## How the score works
 
@@ -57,6 +57,7 @@ My guess, which I have not confirmed in any documentation, is that Scout recompu
 
 - **Everything here is unconfirmed.** Scout itself warns that its objects are unconfirmed, that some may not be real, that values such as H, MOID and close-approach distance are very uncertain for short arcs, and that its scores identify interesting objects rather than give rigorous probabilities.
 - **The priority is my own heuristic.** The factor formulas, ranges and default weights are my choices. They are not calibrated or validated against real follow-up outcomes.
+- **Sky positions are approximate.** Scout gives right ascension to the minute and declination to the degree, and they come from its coarse ephemeris for about the time of the snapshot, so they go out of date as objects move. The map is a plain flat plot laid out like a sky chart, with right ascension increasing to the left (24h on the left, 0h on the right, so east is on the left): it shows no horizon, time of night or visibility, and dots can overlap where objects are close together.
 - **It knows nothing about your telescope.** There is no site, time of night, weather or cost model. "Observability" is only a rough brightness and sky-position measure.
 - **Snapshots are about every 6 hours.** Objects that are listed only briefly between two snapshots are missed.
 - **An object that disappears is "last seen", nothing more.** Scout removes objects both when they are confirmed and when they stay unconfirmed, and this page cannot tell which happened.
@@ -101,7 +102,7 @@ flowchart LR
 ├── pipeline/                 fetch.py, parse.py, factors.py, history.py, main.py
 ├── site/
 │   ├── index.html, styles.css
-│   ├── js/                   app.js, score.js, render.js, format.js, *.test.js
+│   ├── js/                   app.js, score.js, sky.js, render.js, format.js, *.test.js
 │   └── data/                 latest.json, history.json, status.json, scoring.json
 ├── tests/                    pytest tests and fixtures
 ├── .github/workflows/update-and-deploy.yml
@@ -203,14 +204,15 @@ I aimed for WCAG 2.1 AA. It was checked with automated keyboard and contrast tes
 
 What the automated checks covered, using throwaway scripts that drive headless Chrome and are not part of this repository:
 
-- **Keyboard:** real key presses for the full Tab order (no traps, a logical order, a visible focus indicator on every stop), plus Enter, Space, arrow keys, Home, End and Escape on the buttons, sliders, disclosure panels and chart.
+- **Keyboard:** real key presses for the full Tab order (no traps, a logical order, a visible focus indicator on every stop), plus Enter, Space, arrow keys, Home, End and Escape on the buttons, sliders, disclosure panels, chart and sky map. The map is one Tab stop; the arrow keys step through the objects in priority order and Enter opens the object's row. Hovering and clicking on the map were checked with a real mouse in the same test.
 - **Contrast:** the computed contrast of every visible text element in both the dark and light themes, plus the focus indicator and the chart and bar colors.
 - **Names and structure:** that every control has an accessible name in the browser's accessibility tree, that headings, landmarks and table headers are in place, and that there are no duplicate ids or broken `aria-` references.
-- **Layout and motion:** no sideways page scrolling at 320 px wide or at 200% zoom (the table and the chart scroll inside their own boxes), and no animation.
+- **Layout and motion:** no sideways page scrolling at 320 px wide or at 200% zoom (the table and the chart scroll inside their own boxes at 320 px), and no CSS animation. The one movement is a smooth scroll when you pick an object on the sky map; the code skips it when reduced motion is requested, but my automated checks did not exercise that path.
+- **Browsers:** everything was run in Chrome only.
 
 What is not covered: screen readers (NVDA, JAWS, VoiceOver), a manual WCAG audit, and real phones and tablets. Please treat the accessibility as unverified until someone has tested it that way.
 
-Design choices that go with it: semantic HTML (a captioned table, labeled sliders), skip links, an `aria-live` region that announces "Ranking updated" and sorts, `aria-sort` on sortable columns, a text alternative for every bar and chart, a table view of the chart, and no information carried by color alone.
+Design choices that go with it: semantic HTML (a captioned table, labeled sliders), skip links, an `aria-live` region that announces "Ranking updated" and sorts, `aria-sort` on sortable columns, a text alternative for every bar, dot and chart, a table view of both the chart and the sky map, and no information carried by color alone.
 
 ## How this was built
 

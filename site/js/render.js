@@ -3,6 +3,7 @@
 // Everything is built with createElement + textContent, never innerHTML, so an
 // object name (or any other value from the data files) can't be read as markup.
 import { binLabel, formatNumber, formatSmart, niceTicks, sparklinePoints, utcLabel } from "./format.js";
+import { dotRadius, nearestIndex, project } from "./sky.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 // Scout's own page for one object (its router uses #/object/<designation>).
@@ -66,13 +67,20 @@ export function showMessage(container, { kind, title, text, onRetry }) {
 
 // --- Weights panel ------------------------------------------------------------------
 
+// "Tablet width and wider" (48rem = 768px). Below this, the explainer and weights panels start closed so the
+// table is not pushed far down a phone. Keep in step with the inline script in index.html and the CSS.
+const WIDE_SCREEN = "(min-width: 48rem)";
+
 // Built once per load. Inputs are never recreated afterwards (update() only changes
 // their values), so a slider keeps keyboard focus while it is being moved.
 export function buildWeightsPanel(container, scoring, { onChange, onReset }) {
-  const section = el("section", null, "panel");
-  section.setAttribute("aria-labelledby", "weights-heading");
+  // A native <details>: open on wider screens, closed on phones. Closing it lets the table sit higher.
+  const section = el("details", null, "panel weights");
+  section.open = window.matchMedia(WIDE_SCREEN).matches;
+  const summary = el("summary");
   const heading = el("h2", "Weights");
   heading.id = "weights-heading";
+  summary.append(heading);
   const intro = el("p", "Move a slider to change how much each factor counts. Weights are scaled to add up to 100%. " +
     "An object that lacks a factor is scored on the factors it has.", "panel-note");
 
@@ -100,7 +108,7 @@ export function buildWeightsPanel(container, scoring, { onChange, onReset }) {
   reset.type = "button";
   reset.addEventListener("click", onReset);
   const warning = el("p", null, "panel-note");
-  section.append(heading, intro, list, reset, warning);
+  section.append(summary, intro, list, reset, warning);
   container.replaceChildren(section);
 
   return {
@@ -244,7 +252,7 @@ function contributionBar(row, scoring) {
 }
 
 function badgesCell(row, scoring) {
-  const cell = el("td");
+  const cell = el("td", null, "badges-cell");
   if (!row.obj.badges.length) {
     cell.textContent = "—";
     return cell;
@@ -383,6 +391,7 @@ function rowGroup(row, ctx) {
   toggle.type = "button";
   toggle.setAttribute("aria-expanded", String(isOpen));
   toggle.setAttribute("aria-controls", detailId);
+  toggle.dataset.object = name; // how the sky map finds this row
   objectCell.append(toggle);
 
   const why = el("td", ctx.why(row), "why");
@@ -418,11 +427,12 @@ function rowGroup(row, ctx) {
 
   // Each object gets its own <tbody>, so zebra striping covers the row and its detail together.
   const group = el("tbody");
+  if (ctx.selected === name) group.classList.add("is-selected"); // the object last picked on the sky map
   group.append(main, detail);
   return group;
 }
 
-// `rows` are already ranked and sorted. ctx: { scoring, expanded: Set, why(row), onOpen(name, slot) }.
+// `rows` are already ranked and sorted. ctx: { scoring, expanded: Set, selected, why(row), onOpen(name, slot) }.
 export function renderRows(table, rows, ctx) {
   table.querySelectorAll("tbody").forEach((body) => body.remove());
   table.append(...rows.map((row) => rowGroup(row, ctx)));
@@ -487,7 +497,11 @@ export function buildChart(container) {
   table.append(caption, thead, tbody);
   details.append(table);
 
-  section.append(heading, note, summary, figure, details);
+  const side = el("div", null, "viz-side");
+  side.append(summary, details);
+  const layout = el("div", null, "viz-layout");
+  layout.append(figure, side);
+  section.append(heading, note, layout);
   container.replaceChildren(section);
 
   let groups = [];
@@ -586,6 +600,209 @@ export function buildChart(container) {
         tr.firstChild.scope = "row";
         tbody.append(tr);
       }
+    },
+  };
+}
+
+// --- Sky map -------------------------------------------------------------------------------
+// One dot per object at its approximate RA/Dec. Dot size follows the current priority, so it
+// changes as the sliders move. It is drawn in real pixels and redrawn when its box changes size,
+// so the labels stay readable on a phone. Plain shapes only: no images.
+
+const SKY = { left: 66, right: 14, top: 14, bottom: 42, minPlotWidth: 170, reach: 16 };
+
+const dotLabel = (p) =>
+  `${p.name}, ${p.priority === null ? "no priority score" : `priority ${p.priority.toFixed(1)}`}, RA ${p.raText}, Dec ${p.decText}°`;
+
+export function buildSkyMap(container, { onSelect }) {
+  const section = el("section", null, "panel sky-panel");
+  section.setAttribute("aria-labelledby", "sky-heading");
+  const heading = el("h2", "Sky map");
+  heading.id = "sky-heading";
+
+  const svg = svgEl("svg", {
+    class: "sky", role: "group",
+    "aria-label": "Sky map of the objects by right ascension and declination. Right ascension increases to the left, " +
+      "as on a sky chart. Use the arrow keys to step " +
+      "through the objects in priority order, and Enter to open an object's table row.",
+  });
+  const tooltip = el("div", null, "chart-tooltip");
+  tooltip.hidden = true;
+  tooltip.setAttribute("aria-hidden", "true"); // each dot has its own label for screen readers
+  const canvas = el("div", null, "sky-canvas");
+  canvas.append(svg, tooltip);
+  const caption = el("figcaption", "Approximate sky positions (Scout gives RA to the minute, Dec to the degree).", "muted");
+  const figure = el("figure", null, "sky-figure");
+  figure.append(canvas, caption);
+
+  const summary = el("p", null, "chart-summary");
+
+  // How to read the dots, in words first, with a small picture of the sizes beside it.
+  const legend = el("p", null, "sky-legend");
+  const legendSvg = svgEl("svg", { viewBox: "0 0 128 24", width: 128, height: 24, "aria-hidden": "true", focusable: "false" });
+  [[12, 0], [38, 50], [68, 100]].forEach(([cx, priority]) =>
+    legendSvg.append(svgEl("circle", { cx, cy: 12, r: dotRadius(priority), class: "sky-dot-fill" })));
+  legendSvg.append(svgEl("circle", { cx: 104, cy: 12, r: dotRadius(null), class: "sky-dot-empty" }));
+  legend.append(legendSvg, el("span", "Larger dots have a higher priority. Hollow rings have no priority score."));
+
+  const details = el("details", null, "chart-table");
+  details.append(el("summary", "Show as a table"));
+  const box = el("div", null, "sky-table-box");
+  box.tabIndex = 0; // lets a keyboard user scroll a long table
+  box.setAttribute("role", "region");
+  box.setAttribute("aria-label", "Sky map data table. Scrolls if it is long.");
+  const table = el("table");
+  const headRow = el("tr");
+  for (const label of ["Object", "Priority", "RA", "Dec"]) {
+    const th = el("th", label);
+    th.scope = "col";
+    headRow.append(th);
+  }
+  const thead = el("thead");
+  thead.append(headRow);
+  const tbody = el("tbody");
+  table.append(el("caption", "Object positions, highest priority first"), thead, tbody);
+  box.append(table);
+  details.append(box);
+
+  const side = el("div", null, "viz-side");
+  side.append(summary, legend, details);
+  const layout = el("div", null, "viz-layout sky-layout");
+  layout.append(figure, side);
+  section.append(heading, layout);
+  container.replaceChildren(section);
+
+  let data = null; // { points, unplotted, selected }
+  let dots = []; // one <g> per point, in priority order
+  let positions = []; // pixel position of each point, same order
+  let active = 0; // the one dot that is a tab stop; arrow keys move it
+  let drawnWidth = 0;
+
+  function hideTip() {
+    tooltip.hidden = true;
+    dots.forEach((g) => g.classList.remove("is-active"));
+  }
+
+  function showTip(i) {
+    const p = data.points[i];
+    const pos = positions[i];
+    dots.forEach((g, j) => g.classList.toggle("is-active", j === i));
+    tooltip.replaceChildren(
+      el("strong", p.name),
+      el("span", p.priority === null ? "No priority score" : `Priority ${p.priority.toFixed(1)}`),
+      el("span", `RA ${p.raText}, Dec ${p.decText}°`),
+    );
+    tooltip.hidden = false;
+    const half = tooltip.offsetWidth / 2;
+    tooltip.style.left = `${Math.min(Math.max(pos.x, half), canvas.clientWidth - half)}px`;
+    const above = pos.y - dotRadius(p.priority) - tooltip.offsetHeight - 8;
+    tooltip.style.top = `${above >= 0 ? above : pos.y + dotRadius(p.priority) + 8}px`; // flip below near the top edge
+  }
+
+  function draw() {
+    if (!data) return;
+    drawnWidth = canvas.clientWidth;
+    const width = Math.max(drawnWidth, SKY.left + SKY.right + SKY.minPlotWidth);
+    const plot = { left: SKY.left, top: SKY.top, width: width - SKY.left - SKY.right };
+    plot.height = Math.max(Math.round(plot.width / 2), 150); // 15 degrees per hour of RA is a 2:1 map
+    const height = plot.top + plot.height + SKY.bottom;
+    svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+    svg.setAttribute("width", width);
+    svg.setAttribute("height", height);
+    svg.replaceChildren(svgEl("rect", { x: plot.left, y: plot.top, width: plot.width, height: plot.height, class: "sky-bg" }));
+
+    const hourLabelStep = plot.width >= 520 ? 2 : 4;
+    for (let h = 0; h <= 24; h += 2) { // subtle hairline grid: every 2 hours of RA, every 30 degrees of Dec
+      const { x } = project(h, 0, plot);
+      svg.append(svgEl("line", { x1: x, x2: x, y1: plot.top, y2: plot.top + plot.height, class: "sky-grid" }));
+      if (h % hourLabelStep === 0) {
+        svg.append(svgText({ x, y: plot.top + plot.height + 16, class: "chart-tick", "text-anchor": "middle" }, `${h}h`));
+      }
+    }
+    for (let d = -90; d <= 90; d += 30) {
+      const { y } = project(0, d, plot);
+      svg.append(svgEl("line", { x1: plot.left, x2: plot.left + plot.width, y1: y, y2: y, class: "sky-grid" }));
+      svg.append(svgText({ x: plot.left - 6, y, class: "chart-tick", "text-anchor": "end", "dominant-baseline": "middle" }, `${d > 0 ? "+" : ""}${d}°`));
+    }
+    // The long label is wider than a phone-sized plot, so narrow maps get the short form.
+    const raTitle = plot.width >= 420 ? "Right ascension (h), increasing to the east ←" : "Right ascension (h) ← east";
+    svg.append(svgText({ x: plot.left + plot.width / 2, y: height - 6, class: "chart-axis-title", "text-anchor": "middle" }, raTitle));
+    const midY = plot.top + plot.height / 2;
+    svg.append(svgText({ x: 12, y: midY, class: "chart-axis-title", "text-anchor": "middle", transform: `rotate(-90 12 ${midY})` }, "Declination (degrees)"));
+
+    positions = data.points.map((p) => project(p.ra, p.dec, plot));
+    dots = data.points.map((p, i) => {
+      const { x, y } = positions[i];
+      const g = svgEl("g", { class: "sky-dot", role: "img", tabindex: i === active ? "0" : "-1", "aria-label": dotLabel(p) });
+      g.classList.toggle("is-selected", p.name === data.selected);
+      g.append(
+        svgEl("circle", { cx: x, cy: y, r: dotRadius(p.priority) + 4, class: "sky-ring" }), // focus / hover / selected ring
+        svgEl("circle", { cx: x, cy: y, r: dotRadius(p.priority), class: p.priority === null ? "sky-dot-empty" : "sky-dot-fill" }),
+      );
+      g.addEventListener("focus", () => {
+        active = i;
+        dots.forEach((other, j) => other.setAttribute("tabindex", j === i ? "0" : "-1"));
+        showTip(i);
+      });
+      g.addEventListener("blur", hideTip);
+      g.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect(p.name);
+          return;
+        }
+        if (event.key === "Escape") hideTip(); // lets a keyboard user dismiss the tooltip
+        const last = dots.length - 1;
+        const target = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: last }[event.key];
+        if (target === undefined) return;
+        event.preventDefault();
+        dots[Math.min(Math.max(target, 0), last)].focus();
+      });
+      return g;
+    });
+    // Big dots first, so small ones stay visible on top of them. Unscored rings go last.
+    const drawOrder = data.points.map((_, i) => i).sort((a, b) => (data.points[b].priority ?? -1) - (data.points[a].priority ?? -1));
+    svg.append(...drawOrder.map((i) => dots[i]));
+    hideTip();
+  }
+
+  // One listener finds the nearest dot, so the pointer only has to be close, not exactly on a dot.
+  const hit = (event) => {
+    const box2 = svg.getBoundingClientRect();
+    return nearestIndex(positions, event.clientX - box2.left, event.clientY - box2.top, SKY.reach);
+  };
+  svg.addEventListener("pointermove", (event) => {
+    const i = data ? hit(event) : -1;
+    svg.style.cursor = i === -1 ? "default" : "pointer";
+    if (i === -1) hideTip();
+    else showTip(i);
+  });
+  svg.addEventListener("pointerleave", hideTip);
+  svg.addEventListener("click", (event) => {
+    const i = data ? hit(event) : -1;
+    if (i !== -1) onSelect(data.points[i].name);
+  });
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(() => { if (data && canvas.clientWidth !== drawnWidth) draw(); }).observe(canvas);
+  }
+
+  return {
+    update(sky, summaryText, selected) {
+      data = { ...sky, selected };
+      summary.textContent = summaryText;
+      const rows = [...sky.points.map((p) => [p, p.raText, `${p.decText}°`]), ...sky.unplotted.map((p) => [p, "no position", "no position"])];
+      tbody.replaceChildren(...rows.map(([p, ra, dec]) => {
+        const tr = el("tr");
+        const nameCell = el("th");
+        nameCell.scope = "row";
+        const open = el("button", p.name, "link-button");
+        open.type = "button";
+        open.addEventListener("click", () => onSelect(p.name));
+        nameCell.append(open);
+        tr.append(nameCell, el("td", formatNumber(p.priority, 1), "num"), el("td", ra, "num"), el("td", dec, "num"));
+        return tr;
+      }));
+      draw();
     },
   };
 }
