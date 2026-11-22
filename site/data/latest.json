@@ -1,32 +1,32 @@
 {
-  "generated_at": "2026-11-21T19:15:28Z",
+  "generated_at": "2026-11-22T06:46:19Z",
   "objects": [
     {
       "badges": [],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.94,
+        "observability": 0.96,
         "pha": 0.0,
-        "sparse": 0.0986,
-        "urgency": 0.1632
+        "sparse": 0.0637,
+        "urgency": 0.2334
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 0.0,
       "missing": [],
       "objectName": "A11K7DC",
       "raw": {
-        "H": 15.0,
-        "Vmag": 18.6,
-        "arc": 27.02,
+        "H": 14.9,
+        "Vmag": 18.4,
+        "arc": 38.21,
         "caDist": null,
         "dec": "+32",
         "elong": 156.0,
         "geocentricScore": 0,
         "ieoScore": 0,
-        "lastRun": "2026-11-21T15:12:00Z",
+        "lastRun": "2026-11-22T01:42:00Z",
         "moid": 1.0,
-        "nObs": 23,
+        "nObs": 39,
         "neo1kmScore": 0,
         "neoScore": 0,
         "objectName": "A11K7DC",
@@ -34,16 +34,63 @@
         "ra": "05:20",
         "rate": 0.7,
         "rating": 0,
-        "rmsN": 0.5,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "rmsN": 0.61,
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
-        "unc": 0.02,
-        "uncP1": 0.07,
+        "unc": 0.01,
+        "uncP1": 0.06,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "orbit_uncertain",
+        "few_observations",
+        "new"
+      ],
+      "closeness_source": "caDist",
+      "factors": {
+        "closeness": 0.3731,
+        "observability": 0.7867,
+        "pha": 0.3,
+        "sparse": 0.9706,
+        "urgency": 0.7822
+      },
+      "first_seen": "2026-11-22T06:46:19Z",
+      "gate": 1.0,
+      "missing": [],
+      "objectName": "A11KaH1",
+      "raw": {
+        "H": 22.4,
+        "Vmag": 18.4,
+        "arc": 0.27,
+        "caDist": 7.6,
+        "dec": "-64",
+        "elong": 96.0,
+        "geocentricScore": 0,
+        "ieoScore": 0,
+        "lastRun": "2026-11-22T02:51:00Z",
+        "moid": 0.01,
+        "nObs": 4,
+        "neo1kmScore": 0,
+        "neoScore": 100,
+        "objectName": "A11KaH1",
+        "phaScore": 30,
+        "ra": "03:37",
+        "rate": 12.4,
+        "rating": null,
+        "rmsN": 1.02,
+        "tEphem": "2026-11-22T06:45:00Z",
+        "tisserandScore": 51,
+        "unc": 2.7,
+        "uncP1": 82.0,
+        "vInf": 21.1
+      }
+    },
+    {
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.3696,
@@ -54,17 +101,15 @@
       },
       "first_seen": "2026-11-17T07:54:28Z",
       "gate": 1.0,
-      "missing": [
-        "urgency.unc"
-      ],
+      "missing": [],
       "objectName": "C1HXEZ5",
       "raw": {
         "H": 24.2,
         "Vmag": 21.1,
         "arc": 92.54,
         "caDist": null,
-        "dec": "+15",
-        "elong": 141.0,
+        "dec": "+13",
+        "elong": 139.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T02:17:00Z",
@@ -74,13 +119,13 @@
         "neoScore": 100,
         "objectName": "C1HXEZ5",
         "phaScore": 0,
-        "ra": "01:05",
-        "rate": 11.5,
+        "ra": "01:02",
+        "rate": 12.0,
         "rating": 0,
         "rmsN": 0.76,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.0,
+        "unc": 0.01,
         "uncP1": 0.01,
         "vInf": 19.3
       }
@@ -92,10 +137,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.1695,
-        "observability": 0.4078,
+        "observability": 0.3978,
         "pha": 0.0,
         "sparse": 0.6687,
-        "urgency": 0.3929
+        "urgency": 0.4061
       },
       "first_seen": "2026-11-19T07:24:41Z",
       "gate": 1.0,
@@ -103,7 +148,7 @@
       "objectName": "C1HXRG5",
       "raw": {
         "H": 23.9,
-        "Vmag": 23.3,
+        "Vmag": 23.4,
         "arc": 3.12,
         "caDist": 31.0,
         "dec": "+39",
@@ -117,14 +162,14 @@
         "neoScore": 100,
         "objectName": "C1HXRG5",
         "phaScore": 0,
-        "ra": "23:26",
+        "ra": "23:28",
         "rate": 1.8,
         "rating": 0,
         "rmsN": 0.37,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 45,
-        "unc": 9.0,
-        "uncP1": 17.0,
+        "unc": 12.0,
+        "uncP1": 21.0,
         "vInf": 31.1
       }
     },
@@ -138,7 +183,7 @@
         "observability": 0.5,
         "pha": 0.0,
         "sparse": 0.3423,
-        "urgency": 0.0987
+        "urgency": 0.0842
       },
       "first_seen": "2026-11-19T07:24:41Z",
       "gate": 1.0,
@@ -150,7 +195,7 @@
         "arc": 24.85,
         "caDist": null,
         "dec": "+27",
-        "elong": 146.0,
+        "elong": 145.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T05:27:00Z",
@@ -160,14 +205,14 @@
         "neoScore": 100,
         "objectName": "C1HY115",
         "phaScore": 0,
-        "ra": "01:21",
+        "ra": "01:20",
         "rate": 2.4,
         "rating": 0,
         "rmsN": 0.5,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.15,
-        "uncP1": 0.32,
+        "unc": 0.22,
+        "uncP1": 0.42,
         "vInf": null
       }
     },
@@ -178,10 +223,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.1366,
-        "observability": 0.58,
+        "observability": 0.57,
         "pha": 0.0,
         "sparse": 0.4158,
-        "urgency": 0.0985
+        "urgency": 0.0824
       },
       "first_seen": "2026-11-19T07:24:41Z",
       "gate": 1.0,
@@ -189,10 +234,10 @@
       "objectName": "C1HYZF5",
       "raw": {
         "H": 25.5,
-        "Vmag": 22.2,
+        "Vmag": 22.3,
         "arc": 21.49,
         "caDist": null,
-        "dec": "+22",
+        "dec": "+23",
         "elong": 150.0,
         "geocentricScore": 0,
         "ieoScore": 0,
@@ -203,14 +248,14 @@
         "neoScore": 100,
         "objectName": "C1HYZF5",
         "phaScore": 0,
-        "ra": "01:41",
-        "rate": 5.5,
+        "ra": "01:40",
+        "rate": 5.4,
         "rating": 0,
         "rmsN": 0.75,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.23,
-        "uncP1": 0.49,
+        "unc": 0.34,
+        "uncP1": 0.64,
         "vInf": null
       }
     },
@@ -224,7 +269,7 @@
         "observability": 0.51,
         "pha": 0.0,
         "sparse": 0.3811,
-        "urgency": 0.1104
+        "urgency": 0.117
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 1.0,
@@ -235,8 +280,8 @@
         "Vmag": 22.9,
         "arc": 22.64,
         "caDist": null,
-        "dec": "+25",
-        "elong": 165.0,
+        "dec": "+26",
+        "elong": 164.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T06:34:00Z",
@@ -246,14 +291,14 @@
         "neoScore": 100,
         "objectName": "C1J0FK5",
         "phaScore": 0,
-        "ra": "02:48",
-        "rate": 3.0,
+        "ra": "02:46",
+        "rate": 3.1,
         "rating": 0,
         "rmsN": 0.43,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.42,
-        "uncP1": 0.98,
+        "unc": 0.66,
+        "uncP1": 1.3,
         "vInf": null
       }
     },
@@ -267,7 +312,7 @@
         "observability": 0.54,
         "pha": 0.0,
         "sparse": 0.1997,
-        "urgency": 0.1104
+        "urgency": 0.0937
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 1.0,
@@ -279,7 +324,7 @@
         "arc": 23.78,
         "caDist": null,
         "dec": "+32",
-        "elong": 167.0,
+        "elong": 168.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T08:01:00Z",
@@ -289,14 +334,14 @@
         "neoScore": 100,
         "objectName": "C1J0UE5",
         "phaScore": 0,
-        "ra": "04:08",
+        "ra": "04:07",
         "rate": 1.5,
         "rating": 0,
         "rmsN": 0.49,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.12,
-        "uncP1": 0.28,
+        "unc": 0.19,
+        "uncP1": 0.39,
         "vInf": null
       }
     },
@@ -310,7 +355,7 @@
         "observability": 0.55,
         "pha": 0.0,
         "sparse": 0.1749,
-        "urgency": 0.1104
+        "urgency": 0.0903
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.14,
@@ -322,7 +367,7 @@
         "arc": 22.71,
         "caDist": null,
         "dec": "+30",
-        "elong": 169.0,
+        "elong": 170.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T07:18:00Z",
@@ -336,10 +381,10 @@
         "rate": 1.0,
         "rating": 0,
         "rmsN": 0.47,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 11,
-        "unc": 0.27,
-        "uncP1": 0.63,
+        "unc": 0.42,
+        "uncP1": 0.84,
         "vInf": null
       }
     },
@@ -350,7 +395,7 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.5986,
-        "observability": 0.1822,
+        "observability": 0.0,
         "pha": 0.0,
         "sparse": 0.1939,
         "urgency": 0.0
@@ -361,11 +406,11 @@
       "objectName": "C1J4375",
       "raw": {
         "H": 28.4,
-        "Vmag": 22.4,
+        "Vmag": 31.1,
         "arc": 45.22,
         "caDist": 1.6,
-        "dec": "+29",
-        "elong": 50.0,
+        "dec": "-04",
+        "elong": 16.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T07:52:00Z",
@@ -375,14 +420,14 @@
         "neoScore": 100,
         "objectName": "C1J4375",
         "phaScore": 0,
-        "ra": "14:58",
-        "rate": 377.8,
+        "ra": "15:40",
+        "rate": 76.9,
         "rating": 0,
         "rmsN": 0.56,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
-        "unc": 0.19,
-        "uncP1": 0.05,
+        "unc": 0.08,
+        "uncP1": 0.04,
         "vInf": 25.9
       }
     },
@@ -396,7 +441,7 @@
         "observability": 0.6,
         "pha": 0.19,
         "sparse": 0.4903,
-        "urgency": 0.0903
+        "urgency": 0.0766
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.38,
@@ -408,7 +453,7 @@
         "arc": 18.38,
         "caDist": null,
         "dec": "+31",
-        "elong": 168.0,
+        "elong": 169.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T05:00:00Z",
@@ -422,10 +467,10 @@
         "rate": 0.4,
         "rating": 0,
         "rmsN": 0.38,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
-        "unc": 0.07,
-        "uncP1": 0.14,
+        "unc": 0.1,
+        "uncP1": 0.18,
         "vInf": null
       }
     },
@@ -439,7 +484,7 @@
         "observability": 0.59,
         "pha": 0.0,
         "sparse": 0.129,
-        "urgency": 0.1141
+        "urgency": 0.0923
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 1.0,
@@ -450,8 +495,8 @@
         "Vmag": 22.1,
         "arc": 19.97,
         "caDist": null,
-        "dec": "+19",
-        "elong": 168.0,
+        "dec": "+20",
+        "elong": 169.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T06:52:00Z",
@@ -461,57 +506,55 @@
         "neoScore": 100,
         "objectName": "C1J5665",
         "phaScore": 0,
-        "ra": "04:37",
+        "ra": "04:36",
         "rate": 2.0,
         "rating": 0,
         "rmsN": 0.58,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.2,
-        "uncP1": 0.48,
+        "unc": 0.32,
+        "uncP1": 0.65,
         "vInf": null
       }
     },
     {
-      "badges": [
-        "stale_scout_run"
-      ],
+      "badges": [],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.62,
-        "pha": 0.01,
-        "sparse": 0.6502,
-        "urgency": 0.0951
+        "observability": 0.63,
+        "pha": 0.0,
+        "sparse": 0.2481,
+        "urgency": 0.3
       },
       "first_seen": "2026-11-20T20:18:11Z",
-      "gate": 0.39,
+      "gate": 0.0,
       "missing": [],
       "objectName": "C1J8HA5",
       "raw": {
-        "H": 18.5,
-        "Vmag": 21.8,
-        "arc": 2.8,
+        "H": 19.2,
+        "Vmag": 21.7,
+        "arc": 47.32,
         "caDist": null,
         "dec": "+31",
-        "elong": 165.0,
+        "elong": 166.0,
         "geocentricScore": 0,
         "ieoScore": 0,
-        "lastRun": "2026-11-20T10:21:00Z",
-        "moid": 0.6,
-        "nObs": 9,
-        "neo1kmScore": 4,
-        "neoScore": 39,
+        "lastRun": "2026-11-22T06:40:00Z",
+        "moid": 0.7,
+        "nObs": 13,
+        "neo1kmScore": 0,
+        "neoScore": 0,
         "objectName": "C1J8HA5",
-        "phaScore": 1,
-        "ra": "04:35",
+        "phaScore": 0,
+        "ra": "04:34",
         "rate": 0.9,
         "rating": 0,
-        "rmsN": 0.33,
-        "tEphem": "2026-11-21T19:15:00Z",
-        "tisserandScore": 64,
-        "unc": 0.4,
-        "uncP1": 0.83,
+        "rmsN": 0.34,
+        "tEphem": "2026-11-22T06:45:00Z",
+        "tisserandScore": 0,
+        "unc": 0.01,
+        "uncP1": 0.1,
         "vInf": null
       }
     },
@@ -523,10 +566,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.4624,
-        "observability": 0.57,
+        "observability": 0.56,
         "pha": 0.0,
         "sparse": 0.3899,
-        "urgency": 0.2912
+        "urgency": 0.2836
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 1.0,
@@ -534,11 +577,11 @@
       "objectName": "C1J9AW5",
       "raw": {
         "H": 26.5,
-        "Vmag": 22.3,
+        "Vmag": 22.4,
         "arc": 2.68,
         "caDist": 4.1,
         "dec": "+38",
-        "elong": 160.0,
+        "elong": 161.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T11:46:00Z",
@@ -548,14 +591,14 @@
         "neoScore": 100,
         "objectName": "C1J9AW5",
         "phaScore": 0,
-        "ra": "04:24",
-        "rate": 1.8,
+        "ra": "04:22",
+        "rate": 1.6,
         "rating": 0,
         "rmsN": 0.64,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 20,
-        "unc": 1.5,
-        "uncP1": 4.2,
+        "unc": 2.7,
+        "uncP1": 5.6,
         "vInf": 15.3
       }
     },
@@ -564,10 +607,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.1366,
-        "observability": 0.48,
+        "observability": 0.4844,
         "pha": 0.11,
         "sparse": 0.3512,
-        "urgency": 0.2266
+        "urgency": 0.1768
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 0.84,
@@ -579,7 +622,7 @@
         "arc": 22.75,
         "caDist": null,
         "dec": "+32",
-        "elong": 117.0,
+        "elong": 118.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T09:36:00Z",
@@ -589,14 +632,14 @@
         "neoScore": 84,
         "objectName": "C1J9TF5",
         "phaScore": 11,
-        "ra": "08:26",
+        "ra": "08:27",
         "rate": 1.4,
         "rating": 0,
         "rmsN": 0.38,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 37,
-        "unc": 0.13,
-        "uncP1": 0.74,
+        "unc": 0.36,
+        "uncP1": 1.2,
         "vInf": null
       }
     },
@@ -608,7 +651,7 @@
         "observability": 0.4633,
         "pha": 0.01,
         "sparse": 0.4081,
-        "urgency": 0.2097
+        "urgency": 0.1515
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 0.08,
@@ -619,7 +662,7 @@
         "Vmag": 22.7,
         "arc": 23.18,
         "caDist": null,
-        "dec": "+32",
+        "dec": "+33",
         "elong": 120.0,
         "geocentricScore": 0,
         "ieoScore": 0,
@@ -634,10 +677,10 @@
         "rate": 0.9,
         "rating": 0,
         "rmsN": 0.28,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 74,
-        "unc": 0.04,
-        "uncP1": 0.2,
+        "unc": 0.1,
+        "uncP1": 0.32,
         "vInf": null
       }
     },
@@ -649,7 +692,7 @@
         "observability": 0.41,
         "pha": 0.0,
         "sparse": 0.3514,
-        "urgency": 0.2978
+        "urgency": 0.2656
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 1.0,
@@ -660,7 +703,7 @@
         "Vmag": 23.1,
         "arc": 22.7,
         "caDist": null,
-        "dec": "+31",
+        "dec": "+30",
         "elong": 117.0,
         "geocentricScore": 0,
         "ieoScore": 0,
@@ -675,10 +718,10 @@
         "rate": 2.7,
         "rating": 0,
         "rmsN": 0.17,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 30,
-        "unc": 0.27,
-        "uncP1": 1.7,
+        "unc": 0.81,
+        "uncP1": 2.7,
         "vInf": null
       }
     },
@@ -693,7 +736,7 @@
         "observability": 0.48,
         "pha": 0.0,
         "sparse": 0.9706,
-        "urgency": 0.2339
+        "urgency": 0.2398
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.67,
@@ -705,7 +748,7 @@
         "arc": 0.45,
         "caDist": null,
         "dec": "+27",
-        "elong": 148.0,
+        "elong": 147.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-19T10:02:00Z",
@@ -719,10 +762,10 @@
         "rate": 0.2,
         "rating": 0,
         "rmsN": 0.22,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 52,
-        "unc": 5.2,
-        "uncP1": 6.5,
+        "unc": 6.0,
+        "uncP1": 7.2,
         "vInf": null
       }
     },
@@ -762,7 +805,7 @@
         "rate": 0.3,
         "rating": 0,
         "rmsN": 0.63,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
         "unc": 0.0,
         "uncP1": 0.0,
@@ -780,7 +823,7 @@
         "observability": 0.76,
         "pha": 0.13,
         "sparse": 1.0,
-        "urgency": 0.4333
+        "urgency": 0.4461
       },
       "first_seen": "2026-11-13T14:34:24Z",
       "gate": 0.57,
@@ -791,7 +834,7 @@
         "Vmag": 20.4,
         "arc": 0.37,
         "caDist": null,
-        "dec": "+06",
+        "dec": "+05",
         "elong": 155.0,
         "geocentricScore": 0,
         "ieoScore": 0,
@@ -806,10 +849,10 @@
         "rate": 0.7,
         "rating": 1,
         "rmsN": 0.74,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 55,
-        "unc": 29.0,
-        "uncP1": 38.0,
+        "unc": 33.0,
+        "uncP1": 43.0,
         "vInf": null
       }
     },
@@ -821,7 +864,7 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 1.0,
-        "observability": 0.0089,
+        "observability": 0.0044,
         "pha": 0.0,
         "sparse": 0.1643,
         "urgency": 0.0
@@ -832,11 +875,11 @@
       "objectName": "CF2G4M2",
       "raw": {
         "H": 30.6,
-        "Vmag": 27.2,
+        "Vmag": 27.7,
         "arc": 14.07,
         "caDist": 0.03,
         "dec": "-62",
-        "elong": 47.0,
+        "elong": 46.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-19T19:49:00Z",
@@ -846,11 +889,11 @@
         "neoScore": 100,
         "objectName": "CF2G4M2",
         "phaScore": 0,
-        "ra": "17:45",
-        "rate": 0.4,
+        "ra": "17:46",
+        "rate": 0.3,
         "rating": 0,
         "rmsN": 0.45,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.37,
         "uncP1": 0.37,
@@ -867,7 +910,7 @@
         "observability": 0.65,
         "pha": 0.0,
         "sparse": 0.4156,
-        "urgency": 0.3997
+        "urgency": 0.4039
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 1.0,
@@ -879,7 +922,7 @@
         "arc": 21.53,
         "caDist": 14.0,
         "dec": "+20",
-        "elong": 170.0,
+        "elong": 168.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T05:14:00Z",
@@ -889,26 +932,28 @@
         "neoScore": 100,
         "objectName": "CF2HKX2",
         "phaScore": 0,
-        "ra": "04:30",
-        "rate": 13.2,
+        "ra": "04:41",
+        "rate": 14.0,
         "rating": 0,
         "rmsN": 0.58,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 1,
-        "unc": 4.5,
-        "uncP1": 12.0,
+        "unc": 7.4,
+        "uncP1": 16.0,
         "vInf": 7.0
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0363,
         "observability": 0.62,
         "pha": 0.03,
         "sparse": 0.2785,
-        "urgency": 0.1632
+        "urgency": 0.1318
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.99,
@@ -920,7 +965,7 @@
         "arc": 46.85,
         "caDist": null,
         "dec": "+18",
-        "elong": 178.0,
+        "elong": 177.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T06:33:00Z",
@@ -930,14 +975,14 @@
         "neoScore": 99,
         "objectName": "CF2JT52",
         "phaScore": 3,
-        "ra": "03:39",
+        "ra": "03:38",
         "rate": 1.5,
         "rating": 0,
         "rmsN": 0.6,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 3,
-        "unc": 0.02,
-        "uncP1": 0.07,
+        "unc": 0.04,
+        "uncP1": 0.11,
         "vInf": null
       }
     },
@@ -951,7 +996,7 @@
         "observability": 0.64,
         "pha": 0.0,
         "sparse": 0.2059,
-        "urgency": 0.0
+        "urgency": 0.0528
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.0,
@@ -962,8 +1007,8 @@
         "Vmag": 21.6,
         "arc": 216.33,
         "caDist": null,
-        "dec": "+18",
-        "elong": 178.0,
+        "dec": "+17",
+        "elong": 177.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T07:12:00Z",
@@ -973,14 +1018,14 @@
         "neoScore": 0,
         "objectName": "CF2JT62",
         "phaScore": 0,
-        "ra": "03:45",
-        "rate": 1.1,
+        "ra": "03:44",
+        "rate": 1.0,
         "rating": 0,
         "rmsN": 0.52,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.02,
-        "uncP1": 0.02,
+        "uncP1": 0.03,
         "vInf": null
       }
     },
@@ -994,7 +1039,7 @@
         "observability": 0.63,
         "pha": 0.0,
         "sparse": 0.3248,
-        "urgency": 0.1088
+        "urgency": 0.0984
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.46,
@@ -1016,14 +1061,14 @@
         "neoScore": 46,
         "objectName": "CF2Q812",
         "phaScore": 0,
-        "ra": "04:09",
+        "ra": "04:08",
         "rate": 0.8,
         "rating": 0,
         "rmsN": 0.36,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 26,
-        "unc": 0.36,
-        "uncP1": 0.83,
+        "unc": 0.56,
+        "uncP1": 1.1,
         "vInf": null
       }
     },
@@ -1034,10 +1079,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0363,
-        "observability": 0.64,
+        "observability": 0.65,
         "pha": 0.0,
         "sparse": 0.4772,
-        "urgency": 0.2495
+        "urgency": 0.2625
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.85,
@@ -1045,11 +1090,11 @@
       "objectName": "CF2RR72",
       "raw": {
         "H": 23.0,
-        "Vmag": 21.6,
+        "Vmag": 21.5,
         "arc": 20.93,
         "caDist": null,
         "dec": "+20",
-        "elong": 172.0,
+        "elong": 173.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T06:06:00Z",
@@ -1063,22 +1108,24 @@
         "rate": 1.0,
         "rating": 0,
         "rmsN": 0.92,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 28,
-        "unc": 1.4,
-        "uncP1": 3.4,
+        "unc": 2.3,
+        "uncP1": 4.7,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
         "observability": 0.68,
         "pha": 0.0,
         "sparse": 0.407,
-        "urgency": 0.187
+        "urgency": 0.1237
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 0.07,
@@ -1100,14 +1147,14 @@
         "neoScore": 7,
         "objectName": "CF2ZZV2",
         "phaScore": 0,
-        "ra": "03:21",
+        "ra": "03:20",
         "rate": 1.4,
         "rating": 0,
         "rmsN": 0.77,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.05,
-        "uncP1": 0.21,
+        "unc": 0.12,
+        "uncP1": 0.31,
         "vInf": null
       }
     },
@@ -1121,7 +1168,7 @@
         "observability": 0.65,
         "pha": 0.01,
         "sparse": 0.6788,
-        "urgency": 0.2419
+        "urgency": 0.2509
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 0.69,
@@ -1147,22 +1194,24 @@
         "rate": 0.3,
         "rating": 0,
         "rmsN": 0.61,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 57,
-        "unc": 2.8,
-        "uncP1": 4.8,
+        "unc": 3.7,
+        "uncP1": 5.8,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
         "observability": 0.62,
         "pha": 0.0,
         "sparse": 0.4358,
-        "urgency": 0.1759
+        "urgency": 0.131
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 0.15,
@@ -1173,8 +1222,8 @@
         "Vmag": 21.8,
         "arc": 23.58,
         "caDist": null,
-        "dec": "+35",
-        "elong": 165.0,
+        "dec": "+34",
+        "elong": 166.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T05:17:00Z",
@@ -1188,19 +1237,21 @@
         "rate": 1.0,
         "rating": 0,
         "rmsN": 0.48,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 3,
-        "unc": 0.07,
-        "uncP1": 0.27,
+        "unc": 0.15,
+        "uncP1": 0.41,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.78,
+        "observability": 0.79,
         "pha": 0.0,
         "sparse": 0.0,
         "urgency": 0.0
@@ -1213,7 +1264,7 @@
       "objectName": "CF30MA2",
       "raw": {
         "H": 19.7,
-        "Vmag": 20.2,
+        "Vmag": 20.1,
         "arc": 114155.53,
         "caDist": null,
         "dec": "+37",
@@ -1231,7 +1282,7 @@
         "rate": 0.3,
         "rating": 0,
         "rmsN": 0.63,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.0,
         "uncP1": 0.0,
@@ -1239,46 +1290,44 @@
       }
     },
     {
-      "badges": [
-        "stale_scout_run"
-      ],
-      "closeness_source": "caDist",
+      "badges": [],
+      "closeness_source": "moid",
       "factors": {
-        "closeness": 0.1743,
+        "closeness": 0.3109,
         "observability": 0.7,
-        "pha": 0.02,
-        "sparse": 0.7447,
-        "urgency": 0.6034
+        "pha": 1.0,
+        "sparse": 0.4194,
+        "urgency": 0.1515
       },
       "first_seen": "2026-11-20T20:18:11Z",
-      "gate": 0.88,
+      "gate": 1.0,
       "missing": [],
       "objectName": "CF328M2",
       "raw": {
-        "H": 23.1,
+        "H": 21.6,
         "Vmag": 21.0,
-        "arc": 2.63,
-        "caDist": 30.0,
-        "dec": "+49",
+        "arc": 37.2,
+        "caDist": null,
+        "dec": "+50",
         "elong": 150.0,
         "geocentricScore": 0,
         "ieoScore": 0,
-        "lastRun": "2026-11-20T09:34:00Z",
-        "moid": 0.05,
-        "nObs": 6,
+        "lastRun": "2026-11-21T20:07:00Z",
+        "moid": 0.03,
+        "nObs": 8,
         "neo1kmScore": 0,
-        "neoScore": 88,
+        "neoScore": 100,
         "objectName": "CF328M2",
-        "phaScore": 2,
-        "ra": "04:11",
-        "rate": 2.9,
+        "phaScore": 100,
+        "ra": "04:09",
+        "rate": 2.7,
         "rating": 0,
-        "rmsN": 0.77,
-        "tEphem": "2026-11-21T19:15:00Z",
-        "tisserandScore": 53,
-        "unc": 15.0,
-        "uncP1": 54.0,
-        "vInf": null
+        "rmsN": 0.92,
+        "tEphem": "2026-11-22T06:45:00Z",
+        "tisserandScore": 0,
+        "unc": 0.05,
+        "uncP1": 0.16,
+        "vInf": 17.0
       }
     },
     {
@@ -1292,7 +1341,7 @@
         "observability": 0.4422,
         "pha": 0.33,
         "sparse": 0.7796,
-        "urgency": 0.3116
+        "urgency": 0.3282
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 0.81,
@@ -1314,14 +1363,14 @@
         "neoScore": 81,
         "objectName": "CF367D2",
         "phaScore": 33,
-        "ra": "10:22",
+        "ra": "10:23",
         "rate": 0.9,
         "rating": 0,
         "rmsN": 0.31,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 36,
-        "unc": 1.9,
-        "uncP1": 5.2,
+        "unc": 3.2,
+        "uncP1": 7.4,
         "vInf": null
       }
     },
@@ -1330,39 +1379,39 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0363,
-        "observability": 0.6444,
+        "observability": 0.65,
         "pha": 0.0,
-        "sparse": 0.2774,
-        "urgency": 0.2625
+        "sparse": 0.1127,
+        "urgency": 0.2535
       },
       "first_seen": "2026-11-21T07:06:05Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "CF37AN2",
       "raw": {
-        "H": 18.3,
-        "Vmag": 19.6,
-        "arc": 14.72,
+        "H": 18.2,
+        "Vmag": 19.5,
+        "arc": 23.49,
         "caDist": null,
         "dec": "+41",
-        "elong": 91.0,
+        "elong": 90.0,
         "geocentricScore": 0,
         "ieoScore": 0,
-        "lastRun": "2026-11-21T18:38:00Z",
+        "lastRun": "2026-11-22T03:07:00Z",
         "moid": 0.2,
-        "nObs": 16,
-        "neo1kmScore": 0,
+        "nObs": 37,
+        "neo1kmScore": 2,
         "neoScore": 100,
         "objectName": "CF37AN2",
         "phaScore": 0,
         "ra": "20:38",
         "rate": 1.2,
         "rating": 0,
-        "rmsN": 0.58,
-        "tEphem": "2026-11-21T19:15:00Z",
-        "tisserandScore": 81,
-        "unc": 0.02,
-        "uncP1": 0.15,
+        "rmsN": 0.53,
+        "tEphem": "2026-11-22T06:45:00Z",
+        "tisserandScore": 29,
+        "unc": 0.01,
+        "uncP1": 0.07,
         "vInf": null
       }
     },
@@ -1370,41 +1419,41 @@
       "badges": [],
       "closeness_source": "moid",
       "factors": {
-        "closeness": 0.237,
+        "closeness": 0.1883,
         "observability": 0.6,
-        "pha": 0.57,
-        "sparse": 0.087,
-        "urgency": 0.191
+        "pha": 0.02,
+        "sparse": 0.0294,
+        "urgency": 0.1806
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 1.0,
       "missing": [],
       "objectName": "GS26063",
       "raw": {
-        "H": 14.5,
-        "Vmag": 16.3,
-        "arc": 30.33,
+        "H": 14.7,
+        "Vmag": 16.5,
+        "arc": 53.76,
         "caDist": null,
-        "dec": "+11",
+        "dec": "+12",
         "elong": 35.0,
         "geocentricScore": 0,
         "ieoScore": 0,
-        "lastRun": "2026-11-21T18:08:00Z",
-        "moid": 0.05,
-        "nObs": 23,
+        "lastRun": "2026-11-22T05:56:00Z",
+        "moid": 0.07,
+        "nObs": 33,
         "neo1kmScore": 100,
         "neoScore": 100,
         "objectName": "GS26063",
-        "phaScore": 57,
-        "ra": "14:45",
+        "phaScore": 2,
+        "ra": "14:47",
         "rate": 2.6,
         "rating": 0,
-        "rmsN": 0.78,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "rmsN": 0.82,
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
-        "unc": 0.03,
-        "uncP1": 0.13,
-        "vInf": 60.7
+        "unc": 0.01,
+        "uncP1": 0.04,
+        "vInf": null
       }
     },
     {
@@ -1416,10 +1465,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.4122,
-        "observability": 0.4033,
+        "observability": 0.3889,
         "pha": 0.0,
         "sparse": 0.7445,
-        "urgency": 0.6448
+        "urgency": 0.641
       },
       "first_seen": "2026-11-14T18:00:23Z",
       "gate": 1.0,
@@ -1427,11 +1476,11 @@
       "objectName": "LVg0063",
       "raw": {
         "H": 26.5,
-        "Vmag": 23.3,
+        "Vmag": 23.4,
         "arc": 4.73,
         "caDist": 5.8,
         "dec": "-37",
-        "elong": 120.0,
+        "elong": 119.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-14T16:41:00Z",
@@ -1441,13 +1490,13 @@
         "neoScore": 100,
         "objectName": "LVg0063",
         "phaScore": 0,
-        "ra": "05:14",
-        "rate": 2.5,
+        "ra": "05:16",
+        "rate": 2.2,
         "rating": 0,
         "rmsN": 0.85,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 45,
-        "unc": 340.0,
+        "unc": 350.0,
         "uncP1": 350.0,
         "vInf": 15.4
       }
@@ -1462,10 +1511,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.5593,
-        "observability": 0.72,
+        "observability": 0.69,
         "pha": 0.0,
         "sparse": 0.9409,
-        "urgency": 0.6507
+        "urgency": 0.6514
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 1.0,
@@ -1473,11 +1522,11 @@
       "objectName": "LWn0058",
       "raw": {
         "H": 25.5,
-        "Vmag": 20.8,
+        "Vmag": 21.1,
         "arc": 0.9,
         "caDist": 2.1,
         "dec": "+16",
-        "elong": 145.0,
+        "elong": 144.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T02:51:00Z",
@@ -1487,14 +1536,14 @@
         "neoScore": 100,
         "objectName": "LWn0058",
         "phaScore": 0,
-        "ra": "01:19",
-        "rate": 4.6,
+        "ra": "01:20",
+        "rate": 3.4,
         "rating": 1,
         "rmsN": 0.01,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 32,
-        "unc": 260.0,
-        "uncP1": 310.0,
+        "unc": 290.0,
+        "uncP1": 330.0,
         "vInf": 31.1
       }
     },
@@ -1503,10 +1552,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.6667,
+        "observability": 0.6567,
         "pha": 0.0,
         "sparse": 0.0851,
-        "urgency": 0.0595
+        "urgency": 0.0528
       },
       "first_seen": "2026-11-17T20:55:20Z",
       "gate": 0.42,
@@ -1514,7 +1563,7 @@
       "objectName": "MHN1662",
       "raw": {
         "H": 20.1,
-        "Vmag": 20.8,
+        "Vmag": 20.9,
         "arc": 41.41,
         "caDist": null,
         "dec": "+77",
@@ -1528,14 +1577,14 @@
         "neoScore": 42,
         "objectName": "MHN1662",
         "phaScore": 0,
-        "ra": "03:41",
-        "rate": 3.7,
+        "ra": "03:33",
+        "rate": 3.6,
         "rating": 0,
         "rmsN": 0.29,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 46,
-        "unc": 0.38,
-        "uncP1": 0.6,
+        "unc": 0.48,
+        "uncP1": 0.72,
         "vInf": null
       }
     },
@@ -1546,7 +1595,7 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.7267,
+        "observability": 0.7311,
         "pha": 0.0,
         "sparse": 0.0,
         "urgency": 0.0
@@ -1561,7 +1610,7 @@
         "arc": 368.07,
         "caDist": null,
         "dec": "-39",
-        "elong": 96.0,
+        "elong": 97.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-19T05:58:00Z",
@@ -1571,11 +1620,11 @@
         "neoScore": 0,
         "objectName": "OTO0813",
         "phaScore": 0,
-        "ra": "08:03",
+        "ra": "08:02",
         "rate": 0.6,
         "rating": 0,
         "rmsN": 0.95,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
         "unc": 0.01,
         "uncP1": 0.01,
@@ -1591,10 +1640,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.2066,
-        "observability": 0.6444,
+        "observability": 0.6389,
         "pha": 0.0,
         "sparse": 0.9233,
-        "urgency": 0.5461
+        "urgency": 0.5518
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 1.0,
@@ -1602,11 +1651,11 @@
       "objectName": "P12sBJY",
       "raw": {
         "H": 23.2,
-        "Vmag": 21.2,
+        "Vmag": 21.3,
         "arc": 0.8,
         "caDist": 24.0,
-        "dec": "-26",
-        "elong": 127.0,
+        "dec": "-25",
+        "elong": 128.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-19T10:24:00Z",
@@ -1616,14 +1665,14 @@
         "neoScore": 100,
         "objectName": "P12sBJY",
         "phaScore": 0,
-        "ra": "02:01",
-        "rate": 5.0,
+        "ra": "02:03",
+        "rate": 4.6,
         "rating": 0,
         "rmsN": 0.76,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 48,
-        "unc": 48.0,
-        "uncP1": 80.0,
+        "unc": 63.0,
+        "uncP1": 95.0,
         "vInf": 33.3
       }
     },
@@ -1637,7 +1686,7 @@
         "observability": 0.63,
         "pha": 0.0,
         "sparse": 0.2531,
-        "urgency": 0.1104
+        "urgency": 0.0903
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 0.0,
@@ -1659,14 +1708,14 @@
         "neoScore": 0,
         "objectName": "P12sBLf",
         "phaScore": 0,
-        "ra": "04:00",
+        "ra": "03:59",
         "rate": 0.3,
         "rating": 0,
         "rmsN": 0.79,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
-        "unc": 0.03,
-        "uncP1": 0.07,
+        "unc": 0.05,
+        "uncP1": 0.1,
         "vInf": null
       }
     },
@@ -1677,10 +1726,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.4489,
+        "observability": 0.4533,
         "pha": 0.01,
         "sparse": 0.5428,
-        "urgency": 0.1016
+        "urgency": 0.0903
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 0.28,
@@ -1692,7 +1741,7 @@
         "arc": 19.57,
         "caDist": null,
         "dec": "-03",
-        "elong": 110.0,
+        "elong": 111.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T10:05:00Z",
@@ -1706,17 +1755,16 @@
         "rate": 0.2,
         "rating": 0,
         "rmsN": 0.57,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 80,
-        "unc": 0.11,
-        "uncP1": 0.24,
+        "unc": 0.16,
+        "uncP1": 0.32,
         "vInf": null
       }
     },
     {
       "badges": [
-        "few_observations",
-        "new"
+        "few_observations"
       ],
       "closeness_source": "moid",
       "factors": {
@@ -1724,7 +1772,7 @@
         "observability": 0.5556,
         "pha": 0.13,
         "sparse": 0.9721,
-        "urgency": 0.279
+        "urgency": 0.2236
       },
       "first_seen": "2026-11-21T19:15:28Z",
       "gate": 0.78,
@@ -1746,29 +1794,28 @@
         "neoScore": 78,
         "objectName": "P12sGYA",
         "phaScore": 13,
-        "ra": "09:40",
+        "ra": "09:41",
         "rate": 1.1,
         "rating": 0,
         "rmsN": 0.13,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 39,
-        "unc": 0.14,
-        "uncP1": 1.1,
+        "unc": 0.53,
+        "uncP1": 1.8,
         "vInf": null
       }
     },
     {
       "badges": [
-        "few_observations",
-        "new"
+        "few_observations"
       ],
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.3069,
-        "observability": 0.5833,
+        "observability": 0.5878,
         "pha": 0.0,
         "sparse": 0.9019,
-        "urgency": 0.5175
+        "urgency": 0.457
       },
       "first_seen": "2026-11-21T19:15:28Z",
       "gate": 1.0,
@@ -1780,7 +1827,7 @@
         "arc": 0.99,
         "caDist": 12.0,
         "dec": "+48",
-        "elong": 111.0,
+        "elong": 112.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T18:42:00Z",
@@ -1790,14 +1837,14 @@
         "neoScore": 100,
         "objectName": "P12sGYy",
         "phaScore": 0,
-        "ra": "09:09",
-        "rate": 4.0,
+        "ra": "09:04",
+        "rate": 3.8,
         "rating": 0,
         "rmsN": 0.08,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 21,
-        "unc": 0.51,
-        "uncP1": 7.3,
+        "unc": 2.9,
+        "uncP1": 12.0,
         "vInf": 8.3
       }
     },
@@ -1811,7 +1858,7 @@
         "observability": 0.53,
         "pha": 0.0,
         "sparse": 0.3235,
-        "urgency": 0.0375
+        "urgency": 0.0666
       },
       "first_seen": "2026-11-14T18:00:23Z",
       "gate": 0.0,
@@ -1837,10 +1884,10 @@
         "rate": 0.7,
         "rating": 0,
         "rmsN": 0.58,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.03,
-        "uncP1": 0.04,
+        "uncP1": 0.05,
         "vInf": null
       }
     },
@@ -1854,7 +1901,7 @@
         "observability": 0.5044,
         "pha": 0.0,
         "sparse": 0.2949,
-        "urgency": 0.0415
+        "urgency": 0.0375
       },
       "first_seen": "2026-11-15T06:30:27Z",
       "gate": 0.0,
@@ -1880,10 +1927,10 @@
         "rate": 1.7,
         "rating": 0,
         "rmsN": 0.75,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.08,
-        "uncP1": 0.11,
+        "unc": 0.09,
+        "uncP1": 0.12,
         "vInf": null
       }
     },
@@ -1925,7 +1972,7 @@
         "rate": 0.9,
         "rating": 0,
         "rmsN": 0.66,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.0,
         "uncP1": 0.0,
@@ -1939,7 +1986,7 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.65,
+        "observability": 0.64,
         "pha": 0.0,
         "sparse": 0.0882,
         "urgency": 0.0903
@@ -1950,7 +1997,7 @@
       "objectName": "P12sqXG",
       "raw": {
         "H": 21.8,
-        "Vmag": 21.5,
+        "Vmag": 21.6,
         "arc": 93.86,
         "caDist": null,
         "dec": "-11",
@@ -1968,7 +2015,7 @@
         "rate": 1.5,
         "rating": 0,
         "rmsN": 0.47,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.01,
         "uncP1": 0.02,
@@ -1985,7 +2032,7 @@
         "observability": 0.59,
         "pha": 0.02,
         "sparse": 0.7325,
-        "urgency": 0.0388
+        "urgency": 0.0375
       },
       "first_seen": "2026-11-16T22:00:30Z",
       "gate": 0.09,
@@ -1997,7 +2044,7 @@
         "arc": 2.97,
         "caDist": null,
         "dec": "-11",
-        "elong": 149.0,
+        "elong": 148.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-16T21:19:00Z",
@@ -2011,10 +2058,10 @@
         "rate": 0.3,
         "rating": 0,
         "rmsN": 0.99,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 100,
-        "unc": 0.49,
-        "uncP1": 0.66,
+        "unc": 0.57,
+        "uncP1": 0.76,
         "vInf": null
       }
     },
@@ -2028,7 +2075,7 @@
         "observability": 0.64,
         "pha": 0.0,
         "sparse": 0.0588,
-        "urgency": 0.0903
+        "urgency": 0.0375
       },
       "first_seen": "2026-11-16T22:00:30Z",
       "gate": 1.0,
@@ -2050,13 +2097,13 @@
         "neoScore": 100,
         "objectName": "P12sr1F",
         "phaScore": 0,
-        "ra": "05:32",
-        "rate": 1.2,
+        "ra": "05:31",
+        "rate": 1.3,
         "rating": 0,
         "rmsN": 0.51,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.02,
+        "unc": 0.03,
         "uncP1": 0.04,
         "vInf": null
       }
@@ -2082,7 +2129,7 @@
         "Vmag": 22.3,
         "arc": 92.81,
         "caDist": null,
-        "dec": "-11",
+        "dec": "-10",
         "elong": 149.0,
         "geocentricScore": 0,
         "ieoScore": 0,
@@ -2093,11 +2140,11 @@
         "neoScore": 100,
         "objectName": "P12svkD",
         "phaScore": 0,
-        "ra": "04:16",
+        "ra": "04:15",
         "rate": 1.9,
         "rating": 0,
         "rmsN": 0.37,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 96,
         "unc": 0.02,
         "uncP1": 0.03,
@@ -2112,10 +2159,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.1519,
-        "observability": 0.5256,
+        "observability": 0.53,
         "pha": 0.41,
         "sparse": 0.9092,
-        "urgency": 0.0671
+        "urgency": 0.0548
       },
       "first_seen": "2026-11-18T20:30:27Z",
       "gate": 0.71,
@@ -2127,7 +2174,7 @@
         "arc": 0.92,
         "caDist": null,
         "dec": "+02",
-        "elong": 98.0,
+        "elong": 99.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-18T16:14:00Z",
@@ -2141,19 +2188,21 @@
         "rate": 0.2,
         "rating": 0,
         "rmsN": 1.4,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 49,
-        "unc": 0.49,
-        "uncP1": 0.82,
+        "unc": 0.65,
+        "uncP1": 0.99,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.74,
+        "observability": 0.73,
         "pha": 0.0,
         "sparse": 0.0,
         "urgency": 0.0
@@ -2166,11 +2215,11 @@
       "objectName": "P22sBJN",
       "raw": {
         "H": 18.9,
-        "Vmag": 20.6,
+        "Vmag": 20.7,
         "arc": 158125.91,
         "caDist": null,
         "dec": "+24",
-        "elong": 174.0,
+        "elong": 173.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T03:11:00Z",
@@ -2180,11 +2229,11 @@
         "neoScore": 0,
         "objectName": "P22sBJN",
         "phaScore": 0,
-        "ra": "03:28",
+        "ra": "03:27",
         "rate": 1.2,
         "rating": 0,
         "rmsN": 0.54,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
         "unc": 0.0,
         "uncP1": 0.0,
@@ -2201,7 +2250,7 @@
         "observability": 0.62,
         "pha": 0.0,
         "sparse": 0.469,
-        "urgency": 0.1045
+        "urgency": 0.087
       },
       "first_seen": "2026-11-19T20:36:30Z",
       "gate": 1.0,
@@ -2227,10 +2276,10 @@
         "rate": 1.8,
         "rating": 0,
         "rmsN": 0.65,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.13,
-        "uncP1": 0.29,
+        "unc": 0.2,
+        "uncP1": 0.39,
         "vInf": null
       }
     },
@@ -2242,7 +2291,7 @@
         "observability": 0.64,
         "pha": 0.02,
         "sparse": 0.4813,
-        "urgency": 0.1991
+        "urgency": 0.1729
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 0.33,
@@ -2254,7 +2303,7 @@
         "arc": 20.11,
         "caDist": null,
         "dec": "-00",
-        "elong": 138.0,
+        "elong": 139.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T08:21:00Z",
@@ -2268,22 +2317,24 @@
         "rate": 0.9,
         "rating": 0,
         "rmsN": 0.18,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 71,
-        "unc": 0.18,
-        "uncP1": 0.83,
+        "unc": 0.43,
+        "uncP1": 1.3,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0363,
         "observability": 0.63,
         "pha": 0.0,
         "sparse": 0.4573,
-        "urgency": 0.1245
+        "urgency": 0.0978
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 1.0,
@@ -2309,10 +2360,53 @@
         "rate": 2.1,
         "rating": 0,
         "rmsN": 0.73,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.1,
-        "uncP1": 0.26,
+        "unc": 0.17,
+        "uncP1": 0.36,
+        "vInf": null
+      }
+    },
+    {
+      "badges": [
+        "new"
+      ],
+      "closeness_source": "moid",
+      "factors": {
+        "closeness": 0.1519,
+        "observability": 0.6733,
+        "pha": 0.0,
+        "sparse": 0.586,
+        "urgency": 0.4046
+      },
+      "first_seen": "2026-11-22T06:46:19Z",
+      "gate": 1.0,
+      "missing": [],
+      "objectName": "P22sGYW",
+      "raw": {
+        "H": 22.9,
+        "Vmag": 20.6,
+        "arc": 12.74,
+        "caDist": null,
+        "dec": "+56",
+        "elong": 120.0,
+        "geocentricScore": 0,
+        "ieoScore": 0,
+        "lastRun": "2026-11-22T04:21:00Z",
+        "moid": 0.09,
+        "nObs": 6,
+        "neo1kmScore": 0,
+        "neoScore": 100,
+        "objectName": "P22sGYW",
+        "phaScore": 0,
+        "ra": "08:10",
+        "rate": 4.6,
+        "rating": 0,
+        "rmsN": 0.84,
+        "tEphem": "2026-11-22T06:45:00Z",
+        "tisserandScore": 0,
+        "unc": 0.14,
+        "uncP1": 2.6,
         "vInf": null
       }
     },
@@ -2326,7 +2420,7 @@
         "observability": 0.54,
         "pha": 0.0,
         "sparse": 0.2101,
-        "urgency": 0.0375
+        "urgency": 0.0666
       },
       "first_seen": "2026-11-16T22:00:30Z",
       "gate": 1.0,
@@ -2348,14 +2442,14 @@
         "neoScore": 100,
         "objectName": "P22svku",
         "phaScore": 0,
-        "ra": "03:58",
+        "ra": "03:59",
         "rate": 0.4,
         "rating": 0,
         "rmsN": 0.72,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 9,
         "unc": 0.03,
-        "uncP1": 0.04,
+        "uncP1": 0.05,
         "vInf": null
       }
     },
@@ -2381,7 +2475,7 @@
         "arc": 47.47,
         "caDist": null,
         "dec": "+15",
-        "elong": 170.0,
+        "elong": 171.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T08:39:00Z",
@@ -2395,10 +2489,10 @@
         "rate": 2.1,
         "rating": 0,
         "rmsN": 0.63,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.06,
-        "uncP1": 0.12,
+        "unc": 0.08,
+        "uncP1": 0.16,
         "vInf": null
       }
     },
@@ -2409,10 +2503,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
-        "observability": 0.5533,
+        "observability": 0.5633,
         "pha": 0.0,
         "sparse": 0.2254,
-        "urgency": 0.1027
+        "urgency": 0.0819
       },
       "first_seen": "2026-11-18T20:30:27Z",
       "gate": 0.02,
@@ -2420,7 +2514,7 @@
       "objectName": "P22swtR",
       "raw": {
         "H": 20.3,
-        "Vmag": 21.8,
+        "Vmag": 21.7,
         "arc": 44.26,
         "caDist": null,
         "dec": "+30",
@@ -2434,14 +2528,14 @@
         "neoScore": 2,
         "objectName": "P22swtR",
         "phaScore": 0,
-        "ra": "08:12",
+        "ra": "08:13",
         "rate": 1.9,
         "rating": 0,
         "rmsN": 0.42,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.05,
-        "uncP1": 0.11,
+        "unc": 0.08,
+        "uncP1": 0.15,
         "vInf": null
       }
     },
@@ -2453,7 +2547,7 @@
         "observability": 0.56,
         "pha": 0.0,
         "sparse": 0.3599,
-        "urgency": 0.1194
+        "urgency": 0.0903
       },
       "first_seen": "2026-11-18T20:30:27Z",
       "gate": 0.0,
@@ -2475,14 +2569,14 @@
         "neoScore": 0,
         "objectName": "P22swuC",
         "phaScore": 0,
-        "ra": "05:46",
+        "ra": "05:45",
         "rate": 1.3,
         "rating": 0,
         "rmsN": 0.45,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.02,
-        "uncP1": 0.05,
+        "unc": 0.03,
+        "uncP1": 0.06,
         "vInf": null
       }
     },
@@ -2491,10 +2585,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.3829,
-        "observability": 0.69,
+        "observability": 0.68,
         "pha": 0.0,
         "sparse": 0.0096,
-        "urgency": 0.1431
+        "urgency": 0.1194
       },
       "first_seen": "2026-11-19T07:24:41Z",
       "gate": 1.0,
@@ -2502,11 +2596,11 @@
       "objectName": "Sar3013",
       "raw": {
         "H": 28.2,
-        "Vmag": 21.1,
+        "Vmag": 21.2,
         "arc": 65.43,
         "caDist": 7.1,
-        "dec": "+55",
-        "elong": 145.0,
+        "dec": "+58",
+        "elong": 141.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T18:11:00Z",
@@ -2516,14 +2610,14 @@
         "neoScore": 100,
         "objectName": "Sar3013",
         "phaScore": 0,
-        "ra": "03:22",
-        "rate": 22.8,
+        "ra": "03:08",
+        "rate": 21.3,
         "rating": 0,
         "rmsN": 0.41,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.01,
-        "uncP1": 0.03,
+        "unc": 0.02,
+        "uncP1": 0.05,
         "vInf": 5.7
       }
     },
@@ -2534,10 +2628,10 @@
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0363,
-        "observability": 0.6156,
+        "observability": 0.62,
         "pha": 0.1,
         "sparse": 0.5179,
-        "urgency": 0.225
+        "urgency": 0.2411
       },
       "first_seen": "2026-11-19T07:24:41Z",
       "gate": 0.86,
@@ -2548,8 +2642,8 @@
         "Vmag": 21.0,
         "arc": 25.07,
         "caDist": null,
-        "dec": "+12",
-        "elong": 116.0,
+        "dec": "+13",
+        "elong": 117.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-20T00:46:00Z",
@@ -2563,10 +2657,10 @@
         "rate": 1.7,
         "rating": 0,
         "rmsN": 0.38,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 52,
-        "unc": 1.6,
-        "uncP1": 3.3,
+        "unc": 2.4,
+        "uncP1": 4.4,
         "vInf": null
       }
     },
@@ -2580,7 +2674,7 @@
         "observability": 0.71,
         "pha": 0.0,
         "sparse": 0.577,
-        "urgency": 0.1314
+        "urgency": 0.1563
       },
       "first_seen": "2026-11-20T07:14:52Z",
       "gate": 0.11,
@@ -2606,10 +2700,10 @@
         "rate": 1.0,
         "rating": 0,
         "rmsN": 0.31,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 89,
-        "unc": 0.51,
-        "uncP1": 1.2,
+        "unc": 0.8,
+        "uncP1": 1.7,
         "vInf": null
       }
     },
@@ -2623,7 +2717,7 @@
         "observability": 0.76,
         "pha": 0.05,
         "sparse": 0.9691,
-        "urgency": 0.2885
+        "urgency": 0.3061
       },
       "first_seen": "2026-11-21T07:06:05Z",
       "gate": 0.73,
@@ -2645,26 +2739,28 @@
         "neoScore": 73,
         "objectName": "X91806",
         "phaScore": 5,
-        "ra": "04:57",
+        "ra": "04:56",
         "rate": 2.0,
         "rating": 0,
         "rmsN": 0.98,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 48,
-        "unc": 1.4,
-        "uncP1": 4.0,
+        "unc": 2.5,
+        "uncP1": 5.9,
         "vInf": null
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.3195,
-        "observability": 0.63,
+        "observability": 0.61,
         "pha": 0.0,
         "sparse": 0.0588,
-        "urgency": 0.0903
+        "urgency": 0.0528
       },
       "first_seen": "2026-11-18T07:28:14Z",
       "gate": 1.0,
@@ -2672,11 +2768,11 @@
       "objectName": "XAbpwXA",
       "raw": {
         "H": 26.4,
-        "Vmag": 21.7,
+        "Vmag": 21.9,
         "arc": 75.12,
         "caDist": 11.0,
         "dec": "+26",
-        "elong": 172.0,
+        "elong": 171.0,
         "geocentricScore": 0,
         "ieoScore": 0,
         "lastRun": "2026-11-21T03:32:00Z",
@@ -2687,13 +2783,13 @@
         "objectName": "XAbpwXA",
         "phaScore": 0,
         "ra": "03:23",
-        "rate": 4.8,
+        "rate": 4.4,
         "rating": 0,
         "rmsN": 0.66,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 0.01,
-        "uncP1": 0.02,
+        "unc": 0.02,
+        "uncP1": 0.03,
         "vInf": 13.4
       }
     },
@@ -2705,10 +2801,10 @@
       "closeness_source": "caDist",
       "factors": {
         "closeness": 0.6852,
-        "observability": 0.4889,
+        "observability": 0.4689,
         "pha": 0.0,
         "sparse": 0.4721,
-        "urgency": 0.0444
+        "urgency": 0.0368
       },
       "first_seen": "2026-11-16T22:00:30Z",
       "gate": 1.0,
@@ -2716,7 +2812,7 @@
       "objectName": "gb00884",
       "raw": {
         "H": 31.4,
-        "Vmag": 22.8,
+        "Vmag": 23.0,
         "arc": 12.27,
         "caDist": 0.88,
         "dec": "+25",
@@ -2730,26 +2826,28 @@
         "neoScore": 100,
         "objectName": "gb00884",
         "phaScore": 0,
-        "ra": "07:31",
-        "rate": 7.7,
+        "ra": "07:37",
+        "rate": 6.6,
         "rating": 0,
         "rmsN": 0.19,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 0,
-        "unc": 1.7,
-        "uncP1": 1.5,
+        "unc": 1.6,
+        "uncP1": 1.4,
         "vInf": 2.7
       }
     },
     {
-      "badges": [],
+      "badges": [
+        "stale_scout_run"
+      ],
       "closeness_source": "moid",
       "factors": {
         "closeness": 0.0,
         "observability": 0.71,
         "pha": 0.0,
         "sparse": 0.3707,
-        "urgency": 0.1669
+        "urgency": 0.1341
       },
       "first_seen": "2026-11-20T20:18:11Z",
       "gate": 0.0,
@@ -2760,7 +2858,7 @@
         "Vmag": 20.9,
         "arc": 25.1,
         "caDist": null,
-        "dec": "+30",
+        "dec": "+31",
         "elong": 142.0,
         "geocentricScore": 0,
         "ieoScore": 0,
@@ -2771,20 +2869,20 @@
         "neoScore": 0,
         "objectName": "orA8568",
         "phaScore": 0,
-        "ra": "06:31",
-        "rate": 2.4,
+        "ra": "06:32",
+        "rate": 2.5,
         "rating": 0,
         "rmsN": 0.4,
-        "tEphem": "2026-11-21T19:15:00Z",
+        "tEphem": "2026-11-22T06:45:00Z",
         "tisserandScore": 69,
-        "unc": 0.05,
-        "uncP1": 0.18,
+        "unc": 0.1,
+        "uncP1": 0.28,
         "vInf": null
       }
     }
   ],
   "schema_version": 1,
-  "scout_count": 65,
+  "scout_count": 67,
   "scout_version": "1.3",
   "source": "scout",
   "stop_fetching_after": "2027-02-28"
